@@ -1,10 +1,3 @@
-// Constants //
-var YELP_KEY='WbwXHLWvNJnFuO20qqqbow';
-var YELP_TOKEN='MH5eMBwKFivbjRYnQXQcA2F8zFLJ-Fs4';
-var YELP_KEY_SECRET='cVzE8yuatzDX_V4AeM4Q8ePBouM';
-var YELP_TOKEN_SECRET='VY8Jl4Q_CW6KgQ7lvRnsaZv7gmY';
-var YELP_BASE_URL='https://api.yelp.com/v2/search/';
-
 // yelp import //
 var yelp = {
   importYelp: function(request){
@@ -59,6 +52,9 @@ var yelp = {
       searchTerm = 'term=' + spec + '&location='+loc;
     } else if (loc){
       searchTerm = '?location=' + loc;
+    } else {
+      console.log('Error in request');
+      return(null);
     }
     // Remove spaces replace with +
     searchTerm = searchTerm.replace(" ", "+");
@@ -71,4 +67,6 @@ var yelp = {
 };
 var requestString = yelp.searchString('Winnipeg', 'food');
 console.log();
-yelp.importYelp(requestString);
+if(requestString){
+  yelp.importYelp(requestString);
+}
