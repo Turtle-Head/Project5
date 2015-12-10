@@ -27,7 +27,7 @@ var yelp = {
       oauth_signature_method: 'HMAC-SHA1',
       oauth_version : '1.0',
       callback: 'cb',              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-      // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request
+      // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request (limit is optional, defaults to 20)
       limit: 20,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
       term: typeTerm,             // Type of search (art, entertainment, food, business, etc)
       location: locStr            // Location to search
