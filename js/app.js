@@ -1,5 +1,13 @@
 // yelp import //
 var yelp = {
+  randomNonce: function(length){
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for(var i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  },
   importYelp: function(request){
     var yelp_url=YELP_BASE_URL+request;
     // Set up OAuth to authenticate request
@@ -9,7 +17,9 @@ var yelp = {
      * @return {string}
      */
     function nonce_generate() {
-      return (Math.floor(Math.random() * 1e12).toString());
+      var rndNonce = yelp.randomNonce(5+(Math.floor(Math.random()*32)));
+      console.log(rndNonce);
+      return rndNonce;
     }
 
     var parameters = {
