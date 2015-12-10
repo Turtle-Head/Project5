@@ -45,8 +45,9 @@ App displayed on mobile device with hamburger menu. (One possible mobile impleme
 
 Code Sources:
 #001: 'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'
+#002: 'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'
 
 ----------------------------------------
 Current Issues:
-app.js:32 Uncaught ReferenceError: oauthSignature is not defined
+
 */

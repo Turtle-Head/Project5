@@ -1,6 +1,8 @@
 // yelp import //
 var yelp = {
-  randomNonce: function(length){
+  nonce_generate: function(){
+    var length = 5+(Math.floor(Math.random()*32));
+    // SRC #002{'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'}
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for(var i = 0; i < length; i++) {
@@ -8,28 +10,27 @@ var yelp = {
     }
     return text;
   },
-  importYelp: function(request){
-    var yelp_url=YELP_BASE_URL+request;
+  importYelp: function(typeTerm, locStr){
+    // SRC #001 {'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'}
+    var yelp_url=YELP_BASE_URL;
     // Set up OAuth to authenticate request
-    // Begin SRC #001
-    /** {SRC: https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2}
+    /**
      * Generates a random number and returns it as a string for OAuthentication
      * @return {string}
      */
-    function nonce_generate() {
-      var rndNonce = yelp.randomNonce(5+(Math.floor(Math.random()*32)));
-      console.log(rndNonce);
-      return rndNonce;
-    }
 
     var parameters = {
       oauth_consumer_key: YELP_KEY,
       oauth_token: YELP_TOKEN,
-      oauth_nonce: nonce_generate(),
+      oauth_nonce: yelp.nonce_generate(),
       oauth_timestamp: Math.floor(Date.now()/1000),
       oauth_signature_method: 'HMAC-SHA1',
       oauth_version : '1.0',
-      callback: 'cb'              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+      callback: 'cb',              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+      // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request
+      limit: 20,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
+      term: typeTerm,             // Type of search (art, entertainment, food, business, etc)
+      location: locStr            // Location to search
     };
 
     var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
@@ -43,6 +44,7 @@ var yelp = {
       success: function(results) {
       // Do stuff with results
         console.log(results);
+
       },
       error: function() {
       // Do stuff on fail
@@ -54,18 +56,9 @@ var yelp = {
     $.ajax(settings);
     // End of source #001
   },
-  // Defines YELP search string to pass into the importYelp function
-  searchString: function(loc, spec){
-    // Check input variables to see what has been sent
-    var searchTerm;
-    if (loc && spec){
-      searchTerm = 'term=' + spec + '&location='+loc;
-    } else if (loc){
-      searchTerm = '?location=' + loc;
-    } else {
-      console.log('Error in request');
-      return(null);
-    }
+  // Removes spaces from search terms
+  searchString: function(e){
+    var searchTerm = e;
     // Remove spaces replace with +
     searchTerm = searchTerm.replace(" ", "+");
     searchTerm = searchTerm.replace(", ", "+");
@@ -75,8 +68,5 @@ var yelp = {
     return(searchTerm);
   }
 };
-var requestString = yelp.searchString('Winnipeg', 'food');
-console.log();
-if(requestString){
-  yelp.importYelp(requestString);
-}
+
+yelp.importYelp(yelp.searchString('art entertainment'),yelp.searchString('the forks winnipeg'));
