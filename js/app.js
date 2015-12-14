@@ -1,4 +1,44 @@
-//var myMap;
+var Model = {
+  yelpData:[],
+  mapData:{
+    place:[
+      {
+        "name": "Soul de Cuba Cafe",
+        "location":  "1180 Sunset Drive, Kelowna, BC",
+        "phone": "(778)478-9529",
+        "typeD": "food"
+      },
+      {
+        "name": "Project ME",
+        "location": "1083 Sunset Drive, Kelowna, BC",
+        "phone": "(403)970-8442",
+        "typeD": "professional services"
+      },
+      {
+        "name": "Bean Scene Downtown",
+        "location": "274 Bernard Ave, Kelowna, BC",
+        "phone": "(250)763-1814",
+        "typeD": "food"
+      },
+      {
+        "name": "Csek Creative",
+        "location": "1441 Ellis Street, Kelowna, BC",
+        "phone": "(250)862-8010",
+        "typeD": "professional services"
+      },
+      {
+        "name": "Goodsir",
+        "location": "1-1331 Ellis St, Kelowna, BC",
+        "phone": "(250)763-9907",
+        "typeD": "professional services"
+      }
+    ]
+  },
+  wikiData:{
+
+  }
+};
+
 var ViewModel = {
   self: this,
   init: function(){
@@ -10,6 +50,12 @@ var ViewModel = {
       //Make sure the map bounds get updated on page resize
       map.fitBounds(mapBounds);
     });
+    // Sends request for Yelp Data
+    for (var i in Model.mapData.place){
+      //console.log(Model.mapData.place[i]);
+      ViewModel.importYelp("business", ViewModel.searchString(Model.mapData.place[i].location), ViewModel.searchString(Model.mapData.place[i].name));
+    }
+    console.log(Model.yelpData);
   },
   nonce_generate: function(){
     var length = 5+(Math.floor(Math.random()*32));
@@ -21,7 +67,7 @@ var ViewModel = {
     }
     return text;
   },
-  importYelp: function(typeTerm, locStr){
+  importYelp: function(typeTerm, locStr, name){
     // SRC #001 {'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'}
     var yelp_url=YELP_BASE_URL;
     // Set up OAuth to authenticate request
@@ -39,9 +85,10 @@ var ViewModel = {
       oauth_version : '1.0',
       callback: 'cb',              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
       // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request (limit is optional, defaults to 20)
-      limit: 20,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
+      limit: 1,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
       term: typeTerm,             // Type of search (art, entertainment, food, business, etc)
-      location: locStr            // Location to search
+      location: locStr,            // Location to search
+      id: name
     };
 
     var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
@@ -54,7 +101,7 @@ var ViewModel = {
       dataType: 'jsonp',
       success: function(results) {
         // Do stuff with results
-        console.log(results);
+        Model.yelpData.push(results);
 
       },
       error: function() {
@@ -63,6 +110,7 @@ var ViewModel = {
       }
     };
     // Send AJAX query via jQuery library.
+    console.log(settings);
     $.ajax(settings);
     // End of source #001
   },
@@ -99,44 +147,6 @@ var ViewModel = {
     });
   },
 
-};
-
-var Model = {
-  yelpData:{
-
-  },
-  mapData:{
-    place:[
-      {
-        "name": "Soul de Cuba Cafe",
-        "location":  "1180 Sunset Drive, Kelowna, BC",
-        "phone": "(778)478-9529"
-      },
-      {
-        "name": "Project ME",
-        "location": "1083 Sunset Drive, Kelowna, BC",
-        "phone": "(403)970-8442"
-      },
-      {
-        "name": "Bean Scene Downtown",
-        "location": "274 Bernard Ave, Kelowna, BC",
-        "phone": "(250)763-1814"
-      },
-      {
-        "name": "Csek Creative",
-        "location": "1441 Ellis Street, Kelowna, BC",
-        "phone": "(250)862-8010"
-      },
-      {
-        "name": "Goodsir",
-        "location": "1-1331 Ellis St, Kelowna, BC",
-        "phone": "(250)763-9907"
-      }
-    ]
-  },
-  wikiData:{
-
-  }
 };
 
 var View = {
