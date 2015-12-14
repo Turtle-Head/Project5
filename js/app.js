@@ -1,5 +1,16 @@
-// yelp import //
+//var myMap;
 var ViewModel = {
+  self: this,
+  init: function(){
+    // Calls the initializeMap() function when the page loads
+    window.addEventListener('load', View.initializeMap(Model.mapData));
+    // Vanilla JS way to listen for resizing of the window
+    // and adjust map bounds
+    window.addEventListener('resize', function(e) {
+      //Make sure the map bounds get updated on page resize
+      map.fitBounds(mapBounds);
+    });
+  },
   nonce_generate: function(){
     var length = 5+(Math.floor(Math.random()*32));
     // SRC #002{'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'}
@@ -57,16 +68,80 @@ var ViewModel = {
   },
   // Removes spaces from search terms
   searchString: function(e){
-    var searchTerm = e;
     // Remove spaces replace with +
-    searchTerm = searchTerm.replace(" ", "+");
-    searchTerm = searchTerm.replace(", ", "+");
-    searchTerm = searchTerm.replace(",", "+");
-    searchTerm = searchTerm.replace("++", "+");
-    // Return searchTerm for use with the importYelp function
-    return(searchTerm);
+    for (var i in e){
+      e = e.replace(" ", "+");
+      e = e.replace(", ", "+");
+      e = e.replace(",", "+");
+      e = e.replace("++", "+");
+    }
+    // Return e for use with the import data functions
+    return(e);
   },
-  gMap: function(obj){
+  importWiki: function(e){
+    var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + e + '&format=json&callback=wikiCallback';
+    var wikiRequestTimeout = setTimeout(function(){
+      console.log("Failed to get wikipedia resources");
+    }, 8000);
+
+    $.ajax({
+      url: wikiURL,
+      dataType: "jsonp",
+      //jsonp: "callback",
+      success: function( response ){
+        // Writes Wiki articles out to page
+        var articleList = response[1];
+        // Do stuff with the Wiki import
+        console.log(articleList);
+        // Clear the timeout counter
+        clearTimeout(wikiRequestTimeout);
+      }
+    });
+  },
+
+};
+
+var Model = {
+  yelpData:{
+
+  },
+  mapData:{
+    place:[
+      {
+        "name": "Soul de Cuba Cafe",
+        "location":  "1180 Sunset Drive, Kelowna, BC",
+        "phone": "(778)478-9529"
+      },
+      {
+        "name": "Project ME",
+        "location": "1083 Sunset Drive, Kelowna, BC",
+        "phone": "(403)970-8442"
+      },
+      {
+        "name": "Bean Scene Downtown",
+        "location": "274 Bernard Ave, Kelowna, BC",
+        "phone": "(250)763-1814"
+      },
+      {
+        "name": "Csek Creative",
+        "location": "1441 Ellis Street, Kelowna, BC",
+        "phone": "(250)862-8010"
+      },
+      {
+        "name": "Goodsir",
+        "location": "1-1331 Ellis St, Kelowna, BC",
+        "phone": "(250)763-9907"
+      }
+    ]
+  },
+  wikiData:{
+
+  }
+};
+
+var View = {
+  initializeMap: function(obj){
+      console.log(obj);
       var locations;
       var mapOptions = {
         disableDefaultUI: true,
@@ -81,7 +156,9 @@ var ViewModel = {
         // initializes an empty array
         var locations = [];
         // adds the single location property from model to the locations array
-        locations.push(obj./*('some json variable')[i].*/location);
+        for (var i in obj.place)
+        locations.push(obj.place[i].location);
+        console.log(locations);
         return locations;
       }
       /*
@@ -153,47 +230,11 @@ var ViewModel = {
       // locations is an array of location strings returned from locationFinder()
       locations = locationFinder();
       // pinPoster(locations) creates pins on the map for each location in
-      // the locations array
+      // the locations array. Uncomment once you know what is borking this
+      for (var i in locations) locations[i] = ViewModel.searchString(locations[i]);
       pinPoster(locations);
-  },
-  importWiki: function(e){
-    var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + e + '&format=json&callback=wikiCallback';
-    var wikiRequestTimeout = setTimeout(function(){
-      console.log("Failed to get wikipedia resources");
-    }, 8000);
-
-    $.ajax({
-      url: wikiURL,
-      dataType: "jsonp",
-      //jsonp: "callback",
-      success: function( response ){
-        // Writes Wiki articles out to page
-        var articleList = response[1];
-        // Do stuff with the Wiki import
-        console.log(articleList);
-        // Clear the timeout counter
-        clearTimeout(wikiRequestTimeout);
-      }
-    });
-  },
-
-};
-
-var Model = {
-  yelpData:{
-
-  },
-  mapData:{
-
-  },
-  wikiData:{
-
   }
 };
-
-var View = {
-
-};
-
 // Yelp Import Call Needs to be moved to a more appropriate location
 //yelp.importYelp(yelp.searchString('art entertainment'),yelp.searchString('the forks winnipeg'));
+ViewModel.init();
