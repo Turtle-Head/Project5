@@ -4,31 +4,41 @@ var Model = {
     place:[
       {
         "name": "Soul de Cuba Cafe",
-        "location":  "1180 Sunset Drive, Kelowna, BC",
+        "location":  "1180 Sunset Drive",
+        "city": "Kelowna",
+        "province": "BC",
         "phone": "(778)478-9529",
         "typeD": "food"
       },
       {
         "name": "Project ME",
-        "location": "1083 Sunset Drive, Kelowna, BC",
+        "location": "1083 Sunset Drive",
+        "city": "Kelowna",
+        "province": "BC",
         "phone": "(403)970-8442",
         "typeD": "professional services"
       },
       {
         "name": "Bean Scene Downtown",
-        "location": "274 Bernard Ave, Kelowna, BC",
+        "location": "274 Bernard Ave",
+        "city": "Kelowna",
+        "province": "BC",
         "phone": "(250)763-1814",
         "typeD": "food"
       },
       {
         "name": "Csek Creative",
-        "location": "1441 Ellis Street, Kelowna, BC",
+        "location": "1441 Ellis Street",
+        "city": "Kelowna",
+        "province": "BC",
         "phone": "(250)862-8010",
         "typeD": "professional services"
       },
       {
         "name": "Goodsir",
-        "location": "1-1331 Ellis St, Kelowna, BC",
+        "location": "1-1331 Ellis St",
+        "city": "Kelowna",
+        "province": "BC",
         "phone": "(250)763-9907",
         "typeD": "professional services"
       }
@@ -53,7 +63,7 @@ var ViewModel = {
     // Sends request for Yelp Data
     for (var i in Model.mapData.place){
       //console.log(Model.mapData.place[i]);
-      ViewModel.importYelp("business", ViewModel.searchString(Model.mapData.place[i].location), ViewModel.searchString(Model.mapData.place[i].name));
+      ViewModel.importYelp("business", ViewModel.searchString((Model.mapData.place[i].location+"-"+Model.place[i].city)), ViewModel.searchString(Model.mapData.place[i].name));
     }
     console.log(Model.yelpData);
   },
@@ -88,7 +98,7 @@ var ViewModel = {
       limit: 1,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
       term: typeTerm,             // Type of search (art, entertainment, food, business, etc)
       location: locStr,            // Location to search
-      id: name
+      business: name
     };
 
     var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
@@ -117,13 +127,13 @@ var ViewModel = {
   // Removes spaces from search terms
   searchString: function(e){
     // Remove spaces replace with +
-    for (var i in e){
+    for (var x in e){
       e = e.replace(" ", "+");
       e = e.replace(", ", "+");
       e = e.replace(",", "+");
       e = e.replace("++", "+");
     }
-    // Return e for use with the import data functions
+      // Return e for use with the import data functions
     return(e);
   },
   importWiki: function(e){
@@ -167,7 +177,7 @@ var View = {
         var locations = [];
         // adds the single location property from model to the locations array
         for (var i in obj.place)
-        locations.push(obj.place[i].location);
+        locations.push(obj.place[i].location+", "+obj.place[i].city+", "+obj.place[i].province);
         console.log(locations);
         return locations;
       }
