@@ -1,52 +1,47 @@
 var Model = {
-  yelpData:[],
-  mapData:{
-    place:[
+  yelpData: [],
+  mapData: {
+    place: [
       {
-        "name": "Soul de Cuba Cafe",
-        "location":  "1180 Sunset Drive",
+        "name": "Dunn Enzies",
+        "location": "1559 Ellis Street",
         "city": "Kelowna",
         "province": "BC",
-        "phone": "(778)478-9529",
-        "typeD": "food"
+        "phone": "(250)763-2420"
       },
       {
-        "name": "Project ME",
-        "location": "1083 Sunset Drive",
+        "name": "Mad Mango Cafe",
+        "location": "551 Bernard Avenue",
         "city": "Kelowna",
         "province": "BC",
-        "phone": "(403)970-8442",
-        "typeD": "professional services"
+        "phone": "(250)762-8988"
       },
       {
         "name": "Bean Scene Downtown",
         "location": "274 Bernard Ave",
         "city": "Kelowna",
         "province": "BC",
-        "phone": "(250)763-1814",
-        "typeD": "food"
+        "phone": "(250)763-1814"
       },
       {
         "name": "Csek Creative",
         "location": "1441 Ellis Street",
         "city": "Kelowna",
         "province": "BC",
-        "phone": "(250)862-8010",
-        "typeD": "professional services"
+        "phone": "(250)862-8010"
       },
       {
         "name": "Goodsir",
-        "location": "1-1331 Ellis St",
+        "location": "1331 Ellis Street",
         "city": "Kelowna",
         "province": "BC",
-        "phone": "(250)763-9907",
-        "typeD": "professional services"
+        "phone": "(250)763-9907"
       }
     ]
   },
-  wikiData:{
+  wikiData: [
 
-  }
+  ]
 };
 
 var ViewModel = {
@@ -63,12 +58,20 @@ var ViewModel = {
     // Sends request for Yelp Data
     for (var i in Model.mapData.place){
       //console.log(Model.mapData.place[i]);
-      ViewModel.importYelp("business", ViewModel.searchString((Model.mapData.place[i].location+"-"+Model.place[i].city)), ViewModel.searchString(Model.mapData.place[i].name));
+      ViewModel.importYelp(Model.mapData.place[i].name, Model.mapData.place[i].location, Model.mapData.place[i].city, Model.mapData.place[i].name);
+
     }
+    ViewModel.importWiki(ViewModel.searchString(Model.mapData.place[0].city));
+    for (var w in Model.mapData.place){
+      ViewModel.importWiki(ViewModel.searchString(Model.mapData.place[w].name));
+    }
+    console.log('Yelp: ');
     console.log(Model.yelpData);
+    console.log('Wiki: ');
+    console.log(Model.wikiData);
   },
   nonce_generate: function(){
-    var length = 5+(Math.floor(Math.random()*32));
+    var length = 5 + (Math.floor(Math.random() * 32));
     // SRC #002{'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'}
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -77,7 +80,8 @@ var ViewModel = {
     }
     return text;
   },
-  importYelp: function(typeTerm, locStr, name){
+  importYelp: function(typeTerm, locStr, cityD) {
+    var randomizeN = ViewModel.nonce_generate();
     // SRC #001 {'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'}
     var yelp_url=YELP_BASE_URL;
     // Set up OAuth to authenticate request
@@ -96,9 +100,12 @@ var ViewModel = {
       callback: 'cb',              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
       // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request (limit is optional, defaults to 20)
       limit: 1,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
-      term: typeTerm,             // Type of search (art, entertainment, food, business, etc)
+      term: typeTerm + ' ' + cityD,             // Type of search (art, entertainment, food, business, etc)
       location: locStr,            // Location to search
-      business: name
+      id: typeTerm + ' ' + cityD,
+      city: 'Kelowna',
+      province: 'British Columbia',
+      cc: 'CA'
     };
 
     var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
@@ -125,7 +132,7 @@ var ViewModel = {
     // End of source #001
   },
   // Removes spaces from search terms
-  searchString: function(e){
+  searchString: function (e) {
     // Remove spaces replace with +
     for (var x in e){
       e = e.replace(" ", "+");
@@ -136,7 +143,17 @@ var ViewModel = {
       // Return e for use with the import data functions
     return(e);
   },
-  importWiki: function(e){
+  searchYelp: function (e) {
+    for (var x in e){
+      e = e.replace(" ", "-");
+      e = e.replace(", ", "-");
+      e = e.replace(",", "-");
+      e = e.replace("++", "-");
+      e = e.replace("--", "-");
+      e = e.replace("+", "-");
+    }
+  },
+  importWiki: function (e) {
     var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + e + '&format=json&callback=wikiCallback';
     var wikiRequestTimeout = setTimeout(function(){
       console.log("Failed to get wikipedia resources");
@@ -150,7 +167,7 @@ var ViewModel = {
         // Writes Wiki articles out to page
         var articleList = response[1];
         // Do stuff with the Wiki import
-        console.log(articleList);
+        Model.wikiData.push(response);
         // Clear the timeout counter
         clearTimeout(wikiRequestTimeout);
       }
@@ -177,7 +194,7 @@ var View = {
         var locations = [];
         // adds the single location property from model to the locations array
         for (var i in obj.place)
-        locations.push(obj.place[i].location+", "+obj.place[i].city+", "+obj.place[i].province);
+        locations.push(obj.place[i].location + ", " + obj.place[i].city + ", " + obj.place[i].province);
         console.log(locations);
         return locations;
       }
