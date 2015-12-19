@@ -69,6 +69,8 @@ var ViewModel = {
     console.log(Model.yelpData);
     console.log('Wiki: ');
     console.log(Model.wikiData);
+    console.log('K. Cap. News: ');
+    console.log(Model.kdcData);
   },
   nonce_generate: function(){
     var length = 5 + (Math.floor(Math.random() * 32));
@@ -155,7 +157,7 @@ var ViewModel = {
   },
   importWiki: function (e) {
     var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + e + '&format=json&callback=wikiCallback';
-    var wikiRequestTimeout = setTimeout(function(){
+    var wikiRequestTimeout = setTimeout(function () {
       console.log("Failed to get wikipedia resources");
     }, 8000);
 
@@ -165,7 +167,6 @@ var ViewModel = {
       //jsonp: "callback",
       success: function( response ){
         // Writes Wiki articles out to page
-        var articleList = response[1];
         // Do stuff with the Wiki import
         Model.wikiData.push(response);
         // Clear the timeout counter
