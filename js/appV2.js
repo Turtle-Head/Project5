@@ -11,7 +11,7 @@ function searchString(e) {
   return(e);
 }
 // Constructor for Model Data
-var yelpStuff= [];
+
 function PlaceData(name, address){
   var self = this;
 
@@ -19,9 +19,69 @@ function PlaceData(name, address){
   self.address = ko.observable(address);
   self.city = ko.observable('Kelowna');
   self.province = ko.observable('British Columbia');
-  self.yelp = importYelp(self.name(), self.address(), self.city());
   self.location = searchString(self.address()) + '+Kelowna+British+Columbia';
-  self.contentString = ko.observable('<div><div>' + self.name() + '</div><div>' + self.address() + '</div>');
+  self.yelp = ko.observable(0);
+  self.contentString = ko.observable('<div><div>' + self.name() + '</div><div>' + self.address() + '</div><div><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + self.location + '" width="350px"></div>');
+  // Attempting to do the Yelp import from the constructor function to use the data here
+
+
+  // Randomize the nonce generator randomly
+
+  var randomizeN;
+  for (var count = 0; count < Math.floor(Math.random() * Math.floor(Math.random() * 20)); count++){
+    randomizeN = nonce_generate();
+  }
+  // SRC #001 {'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'}
+  var yelp_url=YELP_BASE_URL;
+  // Set up OAuth to authenticate request
+  /**
+  * Generates a random number and returns it as a string for OAuthentication
+  * @return {string}
+  */
+  var yd_out;
+  var parameters = {
+    oauth_consumer_key: YELP_KEY,
+    oauth_token: YELP_TOKEN,
+    oauth_nonce: nonce_generate(),
+    oauth_timestamp: Math.floor(Date.now()/1000),
+    oauth_signature_method: 'HMAC-SHA1',
+    oauth_version : '1.0',
+    callback: 'cb',              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+    // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request (limit is optional, defaults to 20)
+    limit: 1,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
+    term: name + ' ' + 'Kelowna',             // Type of search (art, entertainment, food, business, etc)
+    location: address,            // Location to search
+    id: name + ' ' + 'Kelowna',
+    city: 'Kelowna',
+    province: 'British Columbia',
+    cc: 'CA'
+  };
+
+  var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
+  parameters.oauth_signature = encodedSignature;
+
+  var settings = {
+    url: yelp_url,
+    data: parameters,
+    cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
+    dataType: 'jsonp',
+    success: function(results) {
+      // Create Yelp Object in the constructor
+      self.yelp(results.businesses[0]);
+
+      self.contentString(self.contentString() + '<div><img src="' + results.businesses[0].image_url + '" height="150px"></div><div>Rating: ' + results.businesses[0].rating + '</div>');
+    },
+    error: function() {
+      // Do stuff on fail
+      console.log('Failed to import Data');
+    }
+  };
+  $.ajax(settings);
+
+  // End of Yelp
+
+  //self.contentString(self.contentString() + '<div>Rating: ' + self.yelp.rating + '</div>');
+
 }
 // View Model calls all the things, create *new places* to add them to the model
 function ViewModel() {
@@ -54,64 +114,6 @@ function nonce_generate(){
   return text;
 }
 
-function importYelp(typeTerm, locStr, cityD) {
-  // Randomize the nonce generator randomly
-  var randomizeN;
-  for (var count = 0; count < Math.floor(Math.random() * Math.floor(Math.random() * 20)); count++){
-    randomizeN = nonce_generate();
-  }
-  // SRC #001 {'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'}
-  var yelp_url=YELP_BASE_URL;
-  // Set up OAuth to authenticate request
-  /**
-  * Generates a random number and returns it as a string for OAuthentication
-  * @return {string}
-  */
-  var yd_out = [];
-  var parameters = {
-    oauth_consumer_key: YELP_KEY,
-    oauth_token: YELP_TOKEN,
-    oauth_nonce: nonce_generate(),
-    oauth_timestamp: Math.floor(Date.now()/1000),
-    oauth_signature_method: 'HMAC-SHA1',
-    oauth_version : '1.0',
-    callback: 'cb',              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-    // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request (limit is optional, defaults to 20)
-    limit: 1,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
-    term: typeTerm + ' ' + cityD,             // Type of search (art, entertainment, food, business, etc)
-    location: locStr,            // Location to search
-    id: typeTerm + ' ' + cityD,
-    city: 'Kelowna',
-    province: 'British Columbia',
-    cc: 'CA'
-  };
-
-  var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
-  parameters.oauth_signature = encodedSignature;
-
-  var settings = {
-    url: yelp_url,
-    data: parameters,
-    cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
-    dataType: 'jsonp',
-    success: function(results) {
-      // Do stuff with results
-      yd_out.push(results);
-
-    },
-    error: function() {
-      // Do stuff on fail
-      console.log('Failed to import Data');
-    }
-  };
-
-  // Send AJAX query via jQuery library.
-  $.ajax(settings);
-  // End of source #001
-
-  // Return Yelp Data to the Model Constructor
-  return yd_out;
-}
 
 // Map stuff
 
@@ -145,12 +147,13 @@ function createMapMarker(obj, p) {
   // TODO: data-bind some data from the placeData from the yelp import and figure out why this stuff isn't working
   // TODO: fix redundant creation of yelp model data
   // ----------------
+  var cc;
 
-  var yelp = places()[p].yelp;
-  console.log('Yelp: ');
-  console.log(yelp);
+
+
+
   // The output needs images from the Yelp Data Pull ARGGGGHHHH!!!!
-  var contentString = places()[p].contentString() + '<div></div></div>';
+  var contentString = places()[p].contentString();
 
   // ----------------
   // END OF TODO Area
