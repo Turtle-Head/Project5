@@ -21,7 +21,7 @@ function PlaceData(name, address){
   self.province = ko.observable('British Columbia');
   self.location = searchString(self.address()) + '+Kelowna+British+Columbia';
   self.yelp = ko.observable(0);
-  self.contentString = ko.observable('<div><div>' + self.name() + '</div><div>' + self.address() + '</div><div><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + self.location + '" width="350px"></div>');
+  self.contentString = ko.observable('<div>' + self.name() + '</div>');
   // Attempting to do the Yelp import from the constructor function to use the data here
 
 
@@ -68,8 +68,10 @@ function PlaceData(name, address){
     success: function(results) {
       // Create Yelp Object in the constructor
       self.yelp(results.businesses[0]);
-
-      self.contentString(self.contentString() + '<div><img src="' + results.businesses[0].image_url + '" height="150px"></div><div>Rating: ' + results.businesses[0].rating + '</div>');
+      //self.contentString(self.contentString() + '<div class="flex">');
+      self.contentString(self.contentString() + '<div class="flex"><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + searchString(results.businesses[0].location.address[0]) + 'Kelowna+British+Columbia" width="350px"><img src="' + results.businesses[0].image_url + '" height="150px"><img src="' + results.businesses[0].snippet_image_url + '" height="150px"></div></div><div class="flex"><div width="350px"><ul><li>');
+      self.contentString(self.contentString() + '<address>' + results.businesses[0].location.display_address[0] + '<br>' + results.businesses[0].location.display_address[1] + '</address></li>'+ '<li>' + results.businesses[0].display_phone + '</li><li>Rating: ' + results.businesses[0].rating + '</li></ul></div>');
+      self.contentString(self.contentString() + '<div padding="5px"><img padding="15px" src="' + results.businesses[0].rating_img_url + '" width="150px"></div><div width="100px">' + results.businesses[0].snippet_text + '</div></div>');
     },
     error: function() {
       // Do stuff on fail
@@ -79,7 +81,8 @@ function PlaceData(name, address){
   $.ajax(settings);
 
   // End of Yelp
-
+  console.log('ID: ');
+  console.log(self.yelp()['id']);
   //self.contentString(self.contentString() + '<div>Rating: ' + self.yelp.rating + '</div>');
 
 }
@@ -88,15 +91,26 @@ function ViewModel() {
   var self = this;
 
   self.places = ko.observableArray([
-    new PlaceData('BNA Brewing', '1250 Ellis St'),
+    new PlaceData('The Grateful Fed Pub', '509 Bernard Ave'),
     new PlaceData('Mad Mango Cafe', '551 Bernard Ave'),
     new PlaceData('Bean Scene Downtown', '274 Bernard Ave'),
-    new PlaceData('Csek Creative', '1441 Ellis St'),
-    new PlaceData('Goodsir', '1331 Ellis St')
+    new PlaceData('Mosaic Books', '411 Bernard Ave'),
+    new PlaceData('Doc Willoughby\'s Public House', '353 Bernard Ave'),
+    new PlaceData('Landmark Cinemas Paramount', '261 Bernard Ave'),
+    new PlaceData('Fernando\'s Pub', '279 Bernard Ave')
   ]);
   console.log('Places Model:');
   console.log(self.places());
   initializeMap();
+  $('infoWindow').each($('address').each(function() {
+    var text = $(this).text();
+
+    var q    = $.trim(text).replace(/\r?\n/, ',').replace(/\s+/g, ' ');
+    var link = '<a href="http://maps.google.com/maps?q=' + encodeURIComponent(q) + '" target="_blank"></a>';
+
+    return $(this).wrapInner(link);
+  }));
+  $('body').append('<div class="flex" align="center"><a href="http://maps.google.com"><img src="http://www.userlogos.org/files/logos/48414_v-toll/google_maps_logo.png?1428672032" height="75px"></a>   <a href="http://yelp.com"><img src="https://s3-media1.fl.yelpcdn.com/assets/srv0/www_pages/43ed502d1f6e/assets/img/brand_guidelines/yelp-2c.png" height="75px"></a></div>');
 }
 
 // Not sure how much of this is extra fluff, TODO: rebuild this portion using knockout

@@ -4,6 +4,11 @@ body{
 }
 #map{
   height: 800px;
-  width: 50%;
+  width: 100%;
   background-color: #CCC;
+}
+.flex{
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
 }
