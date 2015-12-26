@@ -2,31 +2,28 @@
 function searchString(e) {
   // Remove spaces replace with +
   for (var x in e){
-    e = e.replace(" ", "+");
-    e = e.replace(", ", "+");
-    e = e.replace(",", "+");
-    e = e.replace("++", "+");
+    e = e.replace(' ', '+');
+    e = e.replace(', ', '+');
+    e = e.replace(',', '+');
+    e = e.replace('++', '+');
   }
     // Return e for use with the import data functions
   return(e);
 }
 // Constructor for Model Data
 
-function PlaceData(name, address){
+function PlaceData(name, address, id){
   var self = this;
-
+  self.id = id; // Button and div ID to show or hide content
   self.name = ko.observable(name);
   self.address = ko.observable(address);
   self.city = ko.observable('Kelowna');
   self.province = ko.observable('British Columbia');
   self.location = searchString(self.address()) + '+Kelowna+British+Columbia';
   self.yelp = ko.observable(0);
-  self.contentString = ko.observable('<div>' + self.name() + '</div>');
+  self.contentString = ko.observable('<div>' + self.name() + '</div><div class="button" id="' + self.id + '">More</div>');
   // Attempting to do the Yelp import from the constructor function to use the data here
-
-
   // Randomize the nonce generator randomly
-
   var randomizeN;
   for (var count = 0; count < Math.floor(Math.random() * Math.floor(Math.random() * 20)); count++){
     randomizeN = nonce_generate();
@@ -69,9 +66,14 @@ function PlaceData(name, address){
       // Create Yelp Object in the constructor
       self.yelp(results.businesses[0]);
       //self.contentString(self.contentString() + '<div class="flex">');
-      self.contentString(self.contentString() + '<div class="flex"><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + searchString(results.businesses[0].location.address[0]) + 'Kelowna+British+Columbia" width="350px"><img src="' + results.businesses[0].image_url + '" height="150px"><img src="' + results.businesses[0].snippet_image_url + '" height="150px"></div></div><div class="flex"><div width="350px"><ul><li>');
-      self.contentString(self.contentString() + '<address>' + results.businesses[0].location.display_address[0] + '<br>' + results.businesses[0].location.display_address[1] + '</address></li>'+ '<li>' + results.businesses[0].display_phone + '</li><li>Rating: ' + results.businesses[0].rating + '</li></ul></div>');
-      self.contentString(self.contentString() + '<div padding="5px"><img padding="15px" src="' + results.businesses[0].rating_img_url + '" width="150px"></div><div width="100px">' + results.businesses[0].snippet_text + '</div></div>');
+      var panel = '<div class="flex"><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + searchString(results.businesses[0].location.address[0]) + 'Kelowna+British+Columbia" width="350px"><img src="' + results.businesses[0].image_url + '" height="150px"><img src="' + results.businesses[0].snippet_image_url + '" height="150px"></div><div class="flex"><div width="350px"><ul><li>';
+      panel = panel + '<address>' + results.businesses[0].location.display_address[0] + '<br>' + results.businesses[0].location.display_address[1] + '</address></li>'+ '<li>' + results.businesses[0].display_phone + '</li><li>Rating: ' + results.businesses[0].rating + '</li></ul></div>';
+      panel = panel + '<div padding="5px"><img padding="15px" src="' + results.businesses[0].rating_img_url + '" width="150px"></div><div width="100px">' + results.businesses[0].snippet_text + '</div></div>';
+      $('body').append('<div class="panel" id=' + self.id + '_panel">' + panel + '</div>');
+      $('#' + self.id + '_panel').hide();
+      //self.contentString(self.contentString() + '<div class="flex"><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + searchString(results.businesses[0].location.address[0], "+") + 'Kelowna+British+Columbia" width="350px"><img src="' + results.businesses[0].image_url + '" height="150px"><img src="' + results.businesses[0].snippet_image_url + '" height="150px"></div></div><div class="flex"><div width="350px"><ul><li>');
+      //self.contentString(self.contentString() + '<address>' + results.businesses[0].location.display_address[0] + '<br>' + results.businesses[0].location.display_address[1] + '</address></li>'+ '<li>' + results.businesses[0].display_phone + '</li><li>Rating: ' + results.businesses[0].rating + '</li></ul></div>');
+      //self.contentString(self.contentString() + '<div padding="5px"><img padding="15px" src="' + results.businesses[0].rating_img_url + '" width="150px"></div><div width="100px">' + results.businesses[0].snippet_text + '</div></div>');
     },
     error: function() {
       // Do stuff on fail
@@ -81,8 +83,7 @@ function PlaceData(name, address){
   $.ajax(settings);
 
   // End of Yelp
-  console.log('ID: ');
-  console.log(self.yelp()['id']);
+
   //self.contentString(self.contentString() + '<div>Rating: ' + self.yelp.rating + '</div>');
 
 }
@@ -91,30 +92,21 @@ function ViewModel() {
   var self = this;
 
   self.places = ko.observableArray([
-    new PlaceData('The Grateful Fed Pub', '509 Bernard Ave'),
-    new PlaceData('Mad Mango Cafe', '551 Bernard Ave'),
-    new PlaceData('Bean Scene Downtown', '274 Bernard Ave'),
-    new PlaceData('Mosaic Books', '411 Bernard Ave'),
-    new PlaceData('Doc Willoughby\'s Public House', '353 Bernard Ave'),
-    new PlaceData('Landmark Cinemas Paramount', '261 Bernard Ave'),
-    new PlaceData('Fernando\'s Pub', '279 Bernard Ave')
+    new PlaceData('The Grateful Fed Pub', '509 Bernard Ave', 'tgfp'),
+    new PlaceData('Mad Mango Cafe', '551 Bernard Ave', 'mmc'),
+    new PlaceData('Bean Scene Downtown', '274 Bernard Ave', 'bsd'),
+    new PlaceData('Mosaic Books', '411 Bernard Ave', 'mosaic'),
+    new PlaceData('Landmark Cinemas Paramount', '261 Bernard Ave', 'lcp')
   ]);
   console.log('Places Model:');
   console.log(self.places());
   initializeMap();
-  $('infoWindow').each($('address').each(function() {
-    var text = $(this).text();
-
-    var q    = $.trim(text).replace(/\r?\n/, ',').replace(/\s+/g, ' ');
-    var link = '<a href="http://maps.google.com/maps?q=' + encodeURIComponent(q) + '" target="_blank"></a>';
-
-    return $(this).wrapInner(link);
-  }));
-  $('body').append('<div class="flex" align="center"><a href="http://maps.google.com"><img src="http://www.userlogos.org/files/logos/48414_v-toll/google_maps_logo.png?1428672032" height="75px"></a>   <a href="http://yelp.com"><img src="https://s3-media1.fl.yelpcdn.com/assets/srv0/www_pages/43ed502d1f6e/assets/img/brand_guidelines/yelp-2c.png" height="75px"></a></div>');
+  $('body').prepend('<div class="flex" align="center"><a href="http://maps.google.com"><img src="http://www.userlogos.org/files/logos/48414_v-toll/google_maps_logo.png?1428672032" height="75px"></a>   <a href="http://yelp.com"><img src="https://s3-media1.fl.yelpcdn.com/assets/srv0/www_pages/43ed502d1f6e/assets/img/brand_guidelines/yelp-2c.png" height="75px"></a></div>');
+  for (var x in self.places){
+    $('#' + places()[x].id).click($('#' + places()[x].id + '_panel').toggle("slow"));
+    $('#' + places()[x].id + '_panel').click($('#' + places()[x].id + '_panel').toggle("slow"));
+  }
 }
-
-// Not sure how much of this is extra fluff, TODO: rebuild this portion using knockout
-// Yelp stuff
 
 // nonce_generate is needed for Yelp to use oAuth correctly
 function nonce_generate(){
@@ -156,22 +148,7 @@ function createMapMarker(obj, p) {
   // infoWindows are the little helper windows that open when you click
   // or hover over a pin on a map. They usually contain more information
   // about a location.
-
-  // Start of TODO Area
-  // TODO: data-bind some data from the placeData from the yelp import and figure out why this stuff isn't working
-  // TODO: fix redundant creation of yelp model data
-  // ----------------
-  var cc;
-
-
-
-
-  // The output needs images from the Yelp Data Pull ARGGGGHHHH!!!!
   var contentString = places()[p].contentString();
-
-  // ----------------
-  // END OF TODO Area
-
   var infoWindow = new google.maps.InfoWindow({
     content: contentString
   });

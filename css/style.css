@@ -3,12 +3,20 @@ body{
   size: 1.5em;
 }
 #map{
-  height: 800px;
-  width: 100%;
+  height: 400px;
+  width: 60%;
   background-color: #CCC;
 }
 .flex{
   display: flex;
   flex-flow: row;
   flex-wrap: wrap;
+}
+.panel{
+  border: 3px;
+  width: 40%;
+  background-color: black;
+  color: white;
+  display: inline-block;
+  z-index: -1;
 }
