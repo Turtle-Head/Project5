@@ -7,9 +7,6 @@
   </head>
   <body>
     <!--CDN Scripts for Application functionality-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
-    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places"></script>
     <!--Content Goes Here-->
     <div class="flex" align="center" border="2px" background-color="blue" padding="10px">
@@ -18,26 +15,39 @@
     <div class="h1">Downtown Kelowna</div>
     <div id="content" class="flex, panel">
       <div id="map"></div>
-      <div class="flex" data-bind="foreach: places">
-        <div class="buttons" data-bind="text: name, click: $parent.setYelp"></div>
-      </div>
+
       <div id="yelp" data-bind="with: currentYelp">
         <h2 id="biz_name" data-bind="text: name"></h2>
         <div id="location" data-bind="text: address"></div>
-        <img id="loc-img" src="" alt="Google Street View" data-bind="attr: {src: locImg}">
+        <div class="flex, images">
+          <img src="" alt="Google Street View" data-bind="attr: {src: locImg}">
+        </div>
         <div data-bind="with: yelp">
-          <div data-bind="text: display_phone"></div>
+          <div class="phone" data-bind="text: display_phone"></div>
           <div class="flex">
-            <div data-bind="text: rating"></div>
-            <img id="rate" src="" alt="Rating" data-bind="attr: {src: rating_img_url}">
+            <div class="rate" data-bind="text: rating"></div>
+            <img class="rate" src="" alt="Rating" data-bind="attr: {src: rating_img_url}">
           </div>
-          <div id="snippet" data-bind="text: snippet_text"></div>
-          <a href="" data-bind="attr: {href: url}">View on Yelp</a>
+          <div class="flex2">
+            <div>
+              <img src="" data-bind="attr: {src: snippet_image_url}">
+            </div>
+            <div id="snippet" data-bind="text: snippet_text"></div>
+          </div>
+          <div class="images, flex">
+            <img src="" data-bind="attr: {src: image_url}">
+            <a href="" data-bind="attr: {href: url}">View on Yelp</a>
+          </div>
         </div>
       </div>
     </div>
-
+    <div class="flex" data-bind="foreach: places">
+      <div class="buttons" data-bind="text: name, click: $parent.setYelp"></div>
+    </div>
     <!--Application Scripts Go Here-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
     <script src="js/lib/oauth-signature.min.js"></script>
     <script src="js/keys.min.js"></script>
     <script src="js/appV2.js"></script>

@@ -15,6 +15,9 @@ body{
   flex-flow: row;
   flex-wrap: wrap;
 }
+.flex2{
+  display: inline-block;
+}
 .panel{
   border: 3px;
   width: 100%;
@@ -32,4 +35,25 @@ body{
   border-radius: 20px;
   margin: 2%;
   text-align: center;
+}
+.rate{
+  padding: 10px;
+  margin: 5px;
+  border: 1px;
+  border-color: orange;
+}
+.phone{
+  padding: 10px;
+  margin: 5px;
+}
+#snippet{
+  padding: 10px;
+  margin: 5px;
+  text-align: justify;
+  font-size: 1.5em;
+}
+#location{
+  padding: 10px;
+  margin: 5px;
+  font-size: 1.5em;
 }

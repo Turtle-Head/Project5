@@ -40,19 +40,17 @@ var searchString = function(e) {
 // Constructor for Model Data
 
 var PlaceData = function(data){
-  var self = this;
-  self.id = data.id; // Button and div ID to show or hide content
-  self.name = ko.observable(data.name);
-  self.address = ko.observable(data.address);
-  self.city = ko.observable('Kelowna');
-  self.province = ko.observable('British Columbia');
-  self.location = searchString(data.address) + '+Kelowna+British+Columbia';
-  self.yelp = ko.observable(0);
+  var PD = this;
+  this.id = data.id; // Button and div ID to show or hide content
+  this.name = ko.observable(data.name);
+  this.address = ko.observable(data.address);
+  this.city = ko.observable('Kelowna');
+  this.province = ko.observable('British Columbia');
+  this.location = searchString(data.address) + '+Kelowna+British+Columbia';
+  this.yelp = ko.observable(0);
 
-  self.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + self.location + ' width="350px"');
-  self.contentString = ko.observable('<div>' + self.name() + '</div><div class="address" id="' + self.id + '">' + self.address() + '</div>');
-  // Attempting to do the Yelp import from the constructor function to use the data here
-
+  this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.location + ' width="350px"');
+  this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
   // Randomize the nonce generator randomly
   var randomizeN;
   for (var count = 0; count < Math.floor(Math.random() * Math.floor(Math.random() * 20)); count++){
@@ -85,7 +83,7 @@ var PlaceData = function(data){
     dataType: 'jsonp',
     success: function(results) {
       // Pass Yelp Object out to the parent object
-      self.yelp(results.businesses[0]);
+      PD.yelp(results.businesses[0]);
     },
     error: function() {
       // Do stuff on fail
@@ -97,21 +95,23 @@ var PlaceData = function(data){
 // View Model calls all the things, create *new places* to add them to the model
 var ViewModel = function() {
   var self = this;
-
+  // Creates an array of places for use in the app with knockout bindings
   this.places = ko.observableArray([]);
-
   pDm.forEach(function(placeItem){
     self.places.push( new PlaceData(placeItem) );
   });
+  // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
-  initializeMap();
+  // The above can be removed when finished
+  // Creates the Yelp panel
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace);
   };
-  this.currentYelp = ko.observable( this.places()[0] );
-
-  $('body').prepend();
+  // Assigns Data to be shown in Yelp panel if a Data Set hasn't been picked yet
+  this.currentYelp = ko.observable( this.places()[1] );
+  // Above can be removed when finished
+  initializeMap();
 };
 
 // nonce_generate is needed for Yelp to use oAuth correctly
@@ -188,20 +188,14 @@ var pinPoster = function() {
   }
 };
 var initializeMap = function(){
-
-
     var mapOptions = {
       disableDefaultUI: false,
       noClear: true
     };
     map = new google.maps.Map(document.querySelector('#map'), mapOptions);
-
     // Sets the boundaries of the map based on pin locations
     window.mapBounds = new google.maps.LatLngBounds();
-
-    // pinPoster() creates pins on the map for each location in
-    // the places array.
-
+    // pinPoster() creates pins on the map for each location
     pinPoster();
 };
 
