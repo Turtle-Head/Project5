@@ -1,5 +1,32 @@
+var pDm = [
+  {
+    'name': 'The Grateful Fed Pub',
+    'address': '509 Bernard Ave',
+    'id': 'tgfp'
+  },
+  {
+    'name': 'Mad Mango Cafe',
+    'address': '551 Bernard Ave',
+    'id': 'mmc'
+  },
+  {
+    'name': 'Bean Scene Downtown',
+    'address': '274 Bernard Ave',
+    'id': 'bsd'
+  },
+  {
+    'name': 'Mosaic Books',
+    'address': '411 Bernard Ave',
+    'id': 'mosaic'
+  },
+  {
+    'name': 'Landmark Cinemas Paramount',
+    'address': '261 Bernard Ave',
+    'id': 'lcp'
+  }
+];
 // Removes spaces from search terms
-function searchString(e) {
+var searchString = function(e) {
   // Remove spaces replace with +
   for (var x in e){
     e = e.replace(' ', '+');
@@ -9,20 +36,23 @@ function searchString(e) {
   }
     // Return e for use with the import data functions
   return(e);
-}
+};
 // Constructor for Model Data
 
-function PlaceData(name, address, id){
+var PlaceData = function(data){
   var self = this;
-  self.id = id; // Button and div ID to show or hide content
-  self.name = ko.observable(name);
-  self.address = ko.observable(address);
+  self.id = data.id; // Button and div ID to show or hide content
+  self.name = ko.observable(data.name);
+  self.address = ko.observable(data.address);
   self.city = ko.observable('Kelowna');
   self.province = ko.observable('British Columbia');
-  self.location = searchString(self.address()) + '+Kelowna+British+Columbia';
+  self.location = searchString(data.address) + '+Kelowna+British+Columbia';
   self.yelp = ko.observable(0);
-  self.contentString = ko.observable('<div>' + self.name() + '</div><div class="button" id="' + self.id + '">More</div>');
+
+  self.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + self.location + ' width="350px"');
+  self.contentString = ko.observable('<div>' + self.name() + '</div><div class="address" id="' + self.id + '">' + self.address() + '</div>');
   // Attempting to do the Yelp import from the constructor function to use the data here
+
   // Randomize the nonce generator randomly
   var randomizeN;
   for (var count = 0; count < Math.floor(Math.random() * Math.floor(Math.random() * 20)); count++){
@@ -30,12 +60,6 @@ function PlaceData(name, address, id){
   }
   // SRC #001 {'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'}
   var yelp_url=YELP_BASE_URL;
-  // Set up OAuth to authenticate request
-  /**
-  * Generates a random number and returns it as a string for OAuthentication
-  * @return {string}
-  */
-  var yd_out;
   var parameters = {
     oauth_consumer_key: YELP_KEY,
     oauth_token: YELP_TOKEN,
@@ -44,36 +68,24 @@ function PlaceData(name, address, id){
     oauth_signature_method: 'HMAC-SHA1',
     oauth_version : '1.0',
     callback: 'cb',              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-    // The last 3 items in the parameters variable can be maleable but must be present (I think) and must be encoded with the rest of the items to work properly for the oAuth request (limit is optional, defaults to 20)
     limit: 1,                  // Number of items to return (max limit=20 if you want other results than the first 20 add a start number or check the documentation for more details at: {'https://www.yelp.ca/developers/documentation/v2/overview'})
-    term: name + ' ' + 'Kelowna',             // Type of search (art, entertainment, food, business, etc)
-    location: address,            // Location to search
-    id: name + ' ' + 'Kelowna',
+    term: data.name + ' ' + 'Kelowna',
+    location: data.address,
+    id: data.name + ' ' + 'Kelowna',
     city: 'Kelowna',
     province: 'British Columbia',
     cc: 'CA'
   };
-
   var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
   parameters.oauth_signature = encodedSignature;
-
   var settings = {
     url: yelp_url,
     data: parameters,
     cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
     dataType: 'jsonp',
     success: function(results) {
-      // Create Yelp Object in the constructor
+      // Pass Yelp Object out to the parent object
       self.yelp(results.businesses[0]);
-      //self.contentString(self.contentString() + '<div class="flex">');
-      var panel = '<div class="flex"><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + searchString(results.businesses[0].location.address[0]) + 'Kelowna+British+Columbia" width="350px"><img src="' + results.businesses[0].image_url + '" height="150px"><img src="' + results.businesses[0].snippet_image_url + '" height="150px"></div><div class="flex"><div width="350px"><ul><li>';
-      panel = panel + '<address>' + results.businesses[0].location.display_address[0] + '<br>' + results.businesses[0].location.display_address[1] + '</address></li>'+ '<li>' + results.businesses[0].display_phone + '</li><li>Rating: ' + results.businesses[0].rating + '</li></ul></div>';
-      panel = panel + '<div padding="5px"><img padding="15px" src="' + results.businesses[0].rating_img_url + '" width="150px"></div><div width="100px">' + results.businesses[0].snippet_text + '</div></div>';
-      $('body').append('<div class="panel" id=' + self.id + '_panel">' + panel + '</div>');
-      $('#' + self.id + '_panel').hide();
-      //self.contentString(self.contentString() + '<div class="flex"><img src="https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + searchString(results.businesses[0].location.address[0], "+") + 'Kelowna+British+Columbia" width="350px"><img src="' + results.businesses[0].image_url + '" height="150px"><img src="' + results.businesses[0].snippet_image_url + '" height="150px"></div></div><div class="flex"><div width="350px"><ul><li>');
-      //self.contentString(self.contentString() + '<address>' + results.businesses[0].location.display_address[0] + '<br>' + results.businesses[0].location.display_address[1] + '</address></li>'+ '<li>' + results.businesses[0].display_phone + '</li><li>Rating: ' + results.businesses[0].rating + '</li></ul></div>');
-      //self.contentString(self.contentString() + '<div padding="5px"><img padding="15px" src="' + results.businesses[0].rating_img_url + '" width="150px"></div><div width="100px">' + results.businesses[0].snippet_text + '</div></div>');
     },
     error: function() {
       // Do stuff on fail
@@ -81,35 +93,29 @@ function PlaceData(name, address, id){
     }
   };
   $.ajax(settings);
-
-  // End of Yelp
-
-  //self.contentString(self.contentString() + '<div>Rating: ' + self.yelp.rating + '</div>');
-
-}
+};
 // View Model calls all the things, create *new places* to add them to the model
-function ViewModel() {
+var ViewModel = function() {
   var self = this;
 
-  self.places = ko.observableArray([
-    new PlaceData('The Grateful Fed Pub', '509 Bernard Ave', 'tgfp'),
-    new PlaceData('Mad Mango Cafe', '551 Bernard Ave', 'mmc'),
-    new PlaceData('Bean Scene Downtown', '274 Bernard Ave', 'bsd'),
-    new PlaceData('Mosaic Books', '411 Bernard Ave', 'mosaic'),
-    new PlaceData('Landmark Cinemas Paramount', '261 Bernard Ave', 'lcp')
-  ]);
+  this.places = ko.observableArray([]);
+
+  pDm.forEach(function(placeItem){
+    self.places.push( new PlaceData(placeItem) );
+  });
   console.log('Places Model:');
   console.log(self.places());
   initializeMap();
-  $('body').prepend('<div class="flex" align="center"><a href="http://maps.google.com"><img src="http://www.userlogos.org/files/logos/48414_v-toll/google_maps_logo.png?1428672032" height="75px"></a>   <a href="http://yelp.com"><img src="https://s3-media1.fl.yelpcdn.com/assets/srv0/www_pages/43ed502d1f6e/assets/img/brand_guidelines/yelp-2c.png" height="75px"></a></div>');
-  for (var x in self.places){
-    $('#' + places()[x].id).click($('#' + places()[x].id + '_panel').toggle("slow"));
-    $('#' + places()[x].id + '_panel').click($('#' + places()[x].id + '_panel').toggle("slow"));
-  }
-}
+  this.setYelp = function(clickedPlace){
+    self.currentYelp(clickedPlace);
+  };
+  this.currentYelp = ko.observable( this.places()[0] );
+
+  $('body').prepend();
+};
 
 // nonce_generate is needed for Yelp to use oAuth correctly
-function nonce_generate(){
+var nonce_generate = function(){
   var length = (Math.floor(Math.random() * 32)) + (Math.floor(Math.random() * 32));
   // SRC #002{'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'}
   var text = "";
@@ -118,12 +124,12 @@ function nonce_generate(){
       text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text;
-}
+};
 
 
 // Map stuff
 
-function callback(results, status) {
+var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
     for (var i in places()){
@@ -132,8 +138,8 @@ function callback(results, status) {
       }
     }
   }
-}
-function createMapMarker(obj, p) {
+};
+var createMapMarker = function(obj, p) {
   // The next lines save location data from the search result object to local variables
   var lat = obj.geometry.location.lat();  // latitude from the place service
   var lon = obj.geometry.location.lng();  // longitude from the place service
@@ -152,6 +158,7 @@ function createMapMarker(obj, p) {
   var infoWindow = new google.maps.InfoWindow({
     content: contentString
   });
+
   // hmmmm, I wonder what this is about...
   google.maps.event.addListener(marker, 'click', function() {
     // your code goes here!
@@ -164,8 +171,8 @@ function createMapMarker(obj, p) {
   map.fitBounds(bounds);
   // center the map
   map.setCenter(bounds.getCenter());
-}
-function pinPoster() {
+};
+var pinPoster = function() {
   // creates a Google place search service object. PlacesService does the work of
   // actually searching for location data.
   var service = new google.maps.places.PlacesService(map);
@@ -179,8 +186,8 @@ function pinPoster() {
     // function with the search results after each search.
     service.textSearch(request, callback);
   }
-}
-function initializeMap(){
+};
+var initializeMap = function(){
 
 
     var mapOptions = {
@@ -196,7 +203,7 @@ function initializeMap(){
     // the places array.
 
     pinPoster();
-}
+};
 
 // Loads map and other content
 ko.applyBindings(ViewModel());

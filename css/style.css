@@ -4,8 +4,11 @@ body{
 }
 #map{
   height: 400px;
-  width: 60%;
+  width: 100%;
   background-color: #CCC;
+}
+#yelp{
+  width: 40%;
 }
 .flex{
   display: flex;
@@ -14,9 +17,19 @@ body{
 }
 .panel{
   border: 3px;
-  width: 40%;
+  width: 100%;
   background-color: black;
   color: white;
-  display: inline-block;
-  z-index: -1;
+  display: inline-grid;
+}
+.button{
+  z-index: 2;
+  border: 1px;
+  width: 15%;
+  color: white;
+  background-color: red;
+  display: inline;
+  border-radius: 20px;
+  margin: 2%;
+  text-align: center;
 }
