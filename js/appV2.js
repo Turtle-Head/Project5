@@ -1,4 +1,4 @@
-var pDm = [
+var pDmodel = [
   {
     'name': 'The Grateful Fed Pub',
     'address': '509 Bernard Ave',
@@ -48,9 +48,9 @@ var PlaceData = function(data){
   this.province = ko.observable('British Columbia');
   this.location = searchString(data.address) + '+Kelowna+British+Columbia';
   this.yelp = ko.observable(0);
-
   this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.location + ' width="350px"');
   this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
+  //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
   for (var count = 0; count < Math.floor(Math.random() * Math.floor(Math.random() * 20)); count++){
@@ -91,25 +91,27 @@ var PlaceData = function(data){
     }
   };
   $.ajax(settings);
+  // End Yelp Call
 };
 // View Model calls all the things, create *new places* to add them to the model
 var ViewModel = function() {
   var self = this;
   // Creates an array of places for use in the app with knockout bindings
   this.places = ko.observableArray([]);
-  pDm.forEach(function(placeItem){
-    self.places.push( new PlaceData(placeItem) );
+  pDmodel.forEach(function(pDmItem){
+    self.places.push( new PlaceData(pDmItem) );
   });
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
+  this.currentYelp = ko.observable( this.places()[0] );
   // The above can be removed when finished
   // Creates the Yelp panel
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace);
   };
   // Assigns Data to be shown in Yelp panel if a Data Set hasn't been picked yet
-  this.currentYelp = ko.observable( this.places()[1] );
+
   // Above can be removed when finished
   initializeMap();
 };

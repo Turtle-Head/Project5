@@ -45,15 +45,26 @@ body{
 .phone{
   padding: 10px;
   margin: 5px;
+  font-style: oblique;
+  font-size: 1.5em;
 }
 #snippet{
   padding: 10px;
   margin: 5px;
-  text-align: justify;
   font-size: 1.5em;
 }
 #location{
   padding: 10px;
   margin: 5px;
   font-size: 1.5em;
+}
+.h2,
+#biz_name{
+  font-size: 2em;
+  padding: 10px;
+  margin: 5px;
+}
+img{
+  margin: 5px;
+  padding: 10px;
 }
