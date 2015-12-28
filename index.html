@@ -16,7 +16,7 @@
     <div id="content" class="flex, panel">
       <div id="map"></div>
       <div class="flex" data-bind="foreach: places">
-        <div class="button" data-bind="text: name, click: $data.setYelp"></div>
+        <button class="button" data-bind="text: name, click: $data.setYelp"></button>
       </div>
       <div id="yelp" data-bind="with: currentYelp">
         <h2 id="biz_name" data-bind="text: name"></h2>
