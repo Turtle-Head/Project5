@@ -176,6 +176,12 @@ var createMapMarker = function(obj, p) {
     } else {
       marker.setAnimation(google.maps.Animation.BOUNCE);
     }
+    self.currentYelp(places()[p]); // sets current pushed button as yelp panel info
+    $('#yelp').show();
+    $('#yelpTog').click(function(){
+      $('#yelp').hide();
+      infoWindow.close(map,marker);
+    });
   });
   // this is where the pin actually gets added to the map.
   // bounds.extend() takes in a map location object
