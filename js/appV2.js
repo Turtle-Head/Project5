@@ -53,6 +53,7 @@ var PlaceData = function(data){
   this.yelp = ko.observable(0);
   this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.location + ' width="350px"');
   this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
+  this.markerId = ko.observable(0);
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -101,8 +102,8 @@ var PlaceData = function(data){
     $('#yelpTog').click(function(){
       $('#yelp').hide();
     });
+    google.maps.event.trigger(this.markerId(),'click');
   };
-
 };
 // View Model calls all the things, create *new places* to add them to the model
 var ViewModel = function() {
@@ -159,17 +160,20 @@ var createMapMarker = function(obj, p) {
     animation: google.maps.Animation.DROP,
     title: name
   });
+  places()[p].markerId(marker);
   // infoWindows are the little helper windows that open when you click
   // or hover over a pin on a map. They usually contain more information
   // about a location.
+  // This infoWindow should have a streetview image as well as name of establishment and address
   var contentString = places()[p].contentString() + '<img src="' + places()[p].locImg() + '">';
   var infoWindow = new google.maps.InfoWindow({
     content: contentString
   });
 
-  // hmmmm, I wonder what this is about...
+  // Adds listener to map markers
+  // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
+  // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
   google.maps.event.addListener(marker, 'click', function() {
-    // your code goes here!
     infoWindow.open(map,marker);
     if (marker.getAnimation() !== null) {
       marker.setAnimation(null);
@@ -181,7 +185,16 @@ var createMapMarker = function(obj, p) {
     $('#yelpTog').click(function(){
       $('#yelp').hide();
       infoWindow.close(map,marker);
+      if (marker.getAnimation() !== null){
+        marker.setAnimation(null);
+      }
     });
+  });
+  google.maps.event.addListener(infoWindow,'closeclick',function(){
+   $('#yelp').hide();
+   if (marker.getAnimation() !== null){
+     marker.setAnimation(null);
+   }
   });
   // this is where the pin actually gets added to the map.
   // bounds.extend() takes in a map location object
