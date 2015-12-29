@@ -9,21 +9,25 @@
     <!--CDN Scripts for Application functionality-->
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places"></script>
     <!--Content Goes Here-->
-    <div class="flex" align="center" border="2px" background-color="blue" padding="10px">
-      <a href="http://maps.google.com" margin="15px"><img src="http://www.userlogos.org/files/logos/48414_v-toll/google_maps_logo.png?1428672032" height="75px"></a><a href="http://yelp.com" margin="15px"><img src="https://s3-media1.fl.yelpcdn.com/assets/srv0/www_pages/43ed502d1f6e/assets/img/brand_guidelines/yelp-2c.png" height="75px"></a>
-    </div>
-    <div class="h1">Downtown Kelowna</div>
     <div id="content" class="flex, panel">
+      <div class="head">
+        <div class="flex" align="center" border="2px" background-color="blue" padding="10px">
+          <a href="http://maps.google.com" margin="15px"><img src="https://developers.google.com/places/documentation/images/powered-by-google-on-non-white.png" height="25px"></a>
+          <a href="http://yelp.com" margin="15px"><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="25px"></a>
+          <img src="" data-bind="attr: {src: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSBMsTshlI8_G6WyE70rSrDadZnEk1RoH9ilv7Ky8KnmGDoZOL-aFVsOA'}" height="25px">
+          <h1>Neighborhood Map Project for the Udacity: Front End Nanodegree</h1>
+        </div>
+      </div>
       <div id="map"></div>
-      <div class="flex" data-bind="foreach: places">
-        <button class="button" data-bind="text: name, click: $data.setYelp"></button>
+      <div class="flex">
+        <button id="yelpTog"> X </button>
+        <div class="flex" data-bind="foreach: places">
+          <button class="button" data-bind="text: name, click: $data.setYelp"></button>
+        </div>
       </div>
       <div id="yelp" data-bind="with: currentYelp">
         <h2 id="biz_name" data-bind="text: name"></h2>
-        <div id="location" data-bind="text: address"></div>
-        <div class="flex, images">
-          <img class="images" src="" alt="Google Street View" data-bind="attr: {src: locImg}">
-        </div>
+        <div class="phone" data-bind="text: address"></div>
         <div data-bind="with: yelp">
           <div class="phone" data-bind="text: display_phone"></div>
           <div class="flex">
@@ -33,9 +37,10 @@
           </div>
           <div class="flex2">
             <div class="flex2">
+              <img class="images" src="" alt="Google Street View" data-bind="attr: {src: $parent.locImg}">
               <img src="" data-bind="attr: {src: snippet_image_url}">
               <img src="" data-bind="attr: {src: image_url}">
-              <a href="" data-bind="attr: {href: url}"><img src="https://s3-media1.fl.yelpcdn.com/assets/srv0/www_pages/43ed502d1f6e/assets/img/brand_guidelines/yelp-2c.png" height="100px" alt="View on Yelp"></a>
+              <a href="" data-bind="attr: {href: url}"><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="100px" alt="View on Yelp"></a>
               <div id="snippet" data-bind="text: snippet_text"></div>
             </div>
           </div>

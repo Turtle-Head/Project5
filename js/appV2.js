@@ -1,7 +1,7 @@
 var pDmodel = [
   {
-    'name': 'The Grateful Fed Pub',
-    'address': '509 Bernard Ave',
+    'name': 'Bohemian Cafe & Catering Company',
+    'address': '524 Bernard Ave',
     'id': 'tgfp'
   },
   {
@@ -20,8 +20,8 @@ var pDmodel = [
     'id': 'mosaic'
   },
   {
-    'name': 'Landmark Cinemas Paramount',
-    'address': '261 Bernard Ave',
+    'name': 'The Royal Anne Hotel',
+    'address': '348 Bernard Ave',
     'id': 'lcp'
   }
 ];
@@ -93,10 +93,13 @@ var PlaceData = function(data){
   $.ajax(settings);
   // End Yelp Call
   this.setYelp = function(clickedPlace){
-    self.currentYelp(clickedPlace);
-    self.clickCount(self.clickCount()+1);
-    console.log(self.clickCount());
+    self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
+    $('#yelp').show();  // show Yelp Panel
+    $('#yelpTog').click(function(){
+      $('#yelp').hide();
+    });
   };
+
 };
 // View Model calls all the things, create *new places* to add them to the model
 var ViewModel = function() {
@@ -111,11 +114,7 @@ var ViewModel = function() {
   console.log(self.places());
   this.clickCount = ko.observable(0);
   this.currentYelp = ko.observable(this.places()[0]);
-
-  // The above can be removed when finished
-  // Assigns Data to be shown in Yelp panel if a Data Set hasn't been picked yet
-
-  // Above can be removed when finished
+  $('#yelp').hide();
   initializeMap();
 };
 

@@ -1,14 +1,12 @@
 body{
   font-family: monospace;
   size: 1.5em;
+  background-color: #EB742A;
 }
 #map{
   height: 400px;
   width: 100%;
   background-color: #CCC;
-}
-#yelp{
-  width: 40%;
 }
 .flex{
   display: flex;
@@ -21,9 +19,10 @@ body{
 .panel{
   border: 3px;
   width: 100%;
-  background-color: black;
-  color: white;
+  background-color: #2AA1EB;
+  color: #ff9933;
   display: inline-grid;
+  border-radius: 10px;
 }
 .button{
   border: 1px;
@@ -31,11 +30,23 @@ body{
   color: white;
   background-color: red;
   display: inline;
-  border-radius: 20px;
+  border-radius: 10px;
   margin: 2%;
   text-align: center;
   font-size: 1.15em;
   font-style: oblique;
+  -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+}
+.button:hover,
+.button:focus,
+#yelpTog:hover,
+#yelpTog:focus{
+  /*reduce the size of the shadow*/
+  -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+  box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
 }
 .rate{
   padding: 10px;
@@ -54,11 +65,6 @@ body{
   margin: 5px;
   font-size: 1.5em;
 }
-#location{
-  padding: 10px;
-  margin: 5px;
-  font-size: 1.25em;
-}
 .h2,
 #biz_name{
   font-size: 2em;
@@ -68,4 +74,31 @@ body{
 img{
   margin: 5px;
   padding: 10px;
+}
+h1{
+  font-size: 1.5em;
+  font-family: monospace;
+  font-weight: bold;
+}
+.head{
+  border-radius: 15px;
+  border-color: #EB742A;
+  background-color: #2AA1EB;
+  border: 3px;
+}
+#yelpTog{
+  border: 1px;
+  color: white;
+  background-color: red;
+  display: inline;
+  border-radius: 10px;
+  margin: 2%;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  font-size: 1.15em;
+  font-style: oblique;
+  -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
 }
