@@ -156,12 +156,13 @@ var createMapMarker = function(obj, p) {
   var marker = new google.maps.Marker({
     map: map,
     position: obj.geometry.location,
+    animation: google.maps.Animation.DROP,
     title: name
   });
   // infoWindows are the little helper windows that open when you click
   // or hover over a pin on a map. They usually contain more information
   // about a location.
-  var contentString = places()[p].contentString();
+  var contentString = places()[p].contentString() + '<img src="' + places()[p].locImg() + '">';
   var infoWindow = new google.maps.InfoWindow({
     content: contentString
   });
@@ -170,6 +171,11 @@ var createMapMarker = function(obj, p) {
   google.maps.event.addListener(marker, 'click', function() {
     // your code goes here!
     infoWindow.open(map,marker);
+    if (marker.getAnimation() !== null) {
+      marker.setAnimation(null);
+    } else {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
   });
   // this is where the pin actually gets added to the map.
   // bounds.extend() takes in a map location object
