@@ -92,6 +92,11 @@ var PlaceData = function(data){
   };
   $.ajax(settings);
   // End Yelp Call
+  this.setYelp = function(clickedPlace){
+    self.currentYelp(clickedPlace);
+    self.clickCount(self.clickCount()+1);
+    console.log(self.clickCount());
+  };
 };
 // View Model calls all the things, create *new places* to add them to the model
 var ViewModel = function() {
@@ -104,12 +109,10 @@ var ViewModel = function() {
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
-  this.currentYelp = ko.observable( this.places()[0] );
+  this.clickCount = ko.observable(0);
+  this.currentYelp = ko.observable(this.places()[0]);
+
   // The above can be removed when finished
-  // Creates the Yelp panel
-  this.setYelp = function(clickedPlace){
-    self.currentYelp(clickedPlace);
-  };
   // Assigns Data to be shown in Yelp panel if a Data Set hasn't been picked yet
 
   // Above can be removed when finished
