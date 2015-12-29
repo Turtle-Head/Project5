@@ -1,3 +1,6 @@
+// Author:James Fehr
+// Date:December 29, 2015
+// Project 5: Neighborhood Map
 var pDmodel = [
   {
     'name': 'Bohemian Cafe & Catering Company',
