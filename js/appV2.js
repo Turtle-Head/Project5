@@ -138,7 +138,7 @@ var nonce_generate = function(){
 
 // Map stuff
 
-// {SRC: http://jsfiddle.net/bryan_weaver/z3Cdg/}
+// {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
 
 var HandleInfoWindow = function(latLng, content) {
@@ -189,7 +189,7 @@ var createMapMarker = function(obj, p) {
     console.log(marker.position);
     console.log(places()[p].yelp().location.coordinate);
     console.log(evt);
-    HandleInfoWindow(places()[p].yelp().location.coordinate, contentString); // {SRC: http://jsfiddle.net/bryan_weaver/z3Cdg/}
+    HandleInfoWindow(places()[p].yelp().location.coordinate, contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
     if (marker.getAnimation() !== null) {
       marker.setAnimation(null);
     } else {
