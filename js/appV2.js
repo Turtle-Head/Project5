@@ -1,6 +1,7 @@
 // Author:James Fehr
 // Date:December 29, 2015
 // Project 5: Neighborhood Map
+var map;
 var pDmodel = [
   {
     'name': 'Bohemian Cafe & Catering Company',
@@ -137,6 +138,19 @@ var nonce_generate = function(){
 
 // Map stuff
 
+// {SRC: http://jsfiddle.net/bryan_weaver/z3Cdg/}
+var infoWindow;
+
+var HandleInfoWindow = function(latLng, content) {
+    var position = {
+      'lat': latLng.latitude,
+      'lng': latLng.longitude
+    };
+    infoWindow.setContent(content);
+    infoWindow.setPosition(position);
+    infoWindow.open(map);
+};
+// *********************************************
 var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
@@ -166,15 +180,16 @@ var createMapMarker = function(obj, p) {
   // about a location.
   // This infoWindow should have a streetview image as well as name of establishment and address
   var contentString = places()[p].contentString() + '<img src="' + places()[p].locImg() + '">';
-  var infoWindow = new google.maps.InfoWindow({
-    content: contentString
-  });
+  infoWindow = new google.maps.InfoWindow();
 
   // Adds listener to map markers
   // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
   // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
-  google.maps.event.addListener(marker, 'click', function() {
-    infoWindow.open(map,marker);
+  google.maps.event.addListener(marker, 'click', function(evt) {
+    console.log(marker.position);
+    console.log(places()[p].yelp().location.coordinate);
+    console.log(evt);
+    HandleInfoWindow(places()[p].yelp().location.coordinate, contentString); // {SRC: http://jsfiddle.net/bryan_weaver/z3Cdg/}
     if (marker.getAnimation() !== null) {
       marker.setAnimation(null);
     } else {
