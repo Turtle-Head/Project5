@@ -1,5 +1,5 @@
 // Author:James Fehr
-// Date:December 29, 2015
+// Date:December 29, 2015  Edit: Ongoing
 // Project 5: Neighborhood Map
 var map;
 var pDmodel = [
@@ -55,6 +55,8 @@ var PlaceData = function(data){
   this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.location + ' width="350px"');
   this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
   this.markerId = ko.observable(0);
+  this.gPlace = ko.observable(0);
+  this.gData = ko.observable(0);
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -97,6 +99,7 @@ var PlaceData = function(data){
   };
   $.ajax(settings);
   // End Yelp Call
+
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
     $('#yelp').show();  // show Yelp Panel
@@ -137,7 +140,16 @@ var nonce_generate = function(){
 
 
 // Map stuff
+var placeScrape = function(i){
+  var url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + places()[i].gPlace().place_id + '&key=' + GOOGLEMAP_API;
 
+  $.getJSON(url, function(data) {
+    places()[i].gData(data);
+    console.log(data);
+  }).error(function(e){
+    console.log('Silly Rabbit tricks are for kids!');
+  });
+};
 // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
 
@@ -154,11 +166,19 @@ var HandleInfoWindow = function(latLng, content) {
 var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
+    var data;
     for (var i in places()){
       if (results[0].name.toLowerCase() == places()[i].address().toLowerCase()){
         createMapMarker(results[0], i);
+        places()[i].gPlace(results[0]);
+        pinPoster2(results[0].place_id, i);
       }
     }
+  }
+};
+var callback2 = function(place, status, p) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    places()[p].gData(place);
   }
 };
 var createMapMarker = function(obj, p) {
@@ -219,6 +239,19 @@ var createMapMarker = function(obj, p) {
   // center the map
   map.setCenter(bounds.getCenter());
 };
+var pinPoster2 = function(place_id, i) {
+  // creates a Google place search service object. PlacesService does the work of
+  // actually searching for location data.
+  var service = new google.maps.places.PlacesService(map);
+  // Iterates through the array of locations, creates a search object for each location
+  var request = {
+    query: place_id
+  };
+    // Actually searches the Google Maps API for location data and runs the callback
+    // function with the search results after each search.
+  service.getDetails(request, callback2, i);
+
+};
 var pinPoster = function() {
   // creates a Google place search service object. PlacesService does the work of
   // actually searching for location data.
@@ -244,6 +277,7 @@ var initializeMap = function(){
     window.mapBounds = new google.maps.LatLngBounds();
     // pinPoster() creates pins on the map for each location
     pinPoster();
+    pinPoster2();
 };
 
 // Loads map and other content
