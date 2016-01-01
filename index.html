@@ -29,12 +29,16 @@
       <div id="yelp" data-bind="with: currentYelp">
         <h2 id="biz_name" data-bind="text: name"></h2>
         <div class="phone" data-bind="text: address"></div>
+        <div class="images" data-bind="with: gData.photos">
+          <div class="images" data-bind="text: html_attributions"></div>
+        </div>
         <div data-bind="with: yelp">
           <div class="phone" data-bind="text: display_phone"></div>
           <div class="flex">
             <div class="rate">Rating: </div>
-            <div class="rate" data-bind="text: rating"></div>
             <img class="rate" src="" alt="Rating" data-bind="attr: {src: rating_img_url}">
+            <div class="rate">Fair Rating (based on averages between Yelp and Google):</div>
+            <div class="rate" data-bind="text: $parent.rating"></div>
           </div>
           <div class="flex2">
             <div class="flex2">
@@ -46,6 +50,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
     <!--Application Scripts Go Here-->

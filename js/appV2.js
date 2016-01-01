@@ -6,27 +6,27 @@ var pDmodel = [
   {
     'name': 'Bohemian Cafe & Catering Company',
     'address': '524 Bernard Ave',
-    'id': 'tgfp'
+    'id': 'ChIJNR-8ZKj0fVMRUTly1t01rtc'
   },
   {
     'name': 'Mad Mango Cafe',
     'address': '551 Bernard Ave',
-    'id': 'mmc'
+    'id': 'ChIJ0RjRaaj0fVMRJtulviLYwuo'
   },
   {
-    'name': 'Bean Scene Downtown',
+    'name': 'The Bean Scene Coffee House',
     'address': '274 Bernard Ave',
-    'id': 'bsd'
+    'id': 'ChIJB2yMA6b0fVMRIk_JoBlIjxg'
   },
   {
     'name': 'Mosaic Books',
     'address': '411 Bernard Ave',
-    'id': 'mosaic'
+    'id': 'ChIJ_1Wqnqj0fVMRoYgRc9oy_Zg'
   },
   {
     'name': 'The Royal Anne Hotel',
     'address': '348 Bernard Ave',
-    'id': 'lcp'
+    'id': 'ChIJK-KSIKb0fVMRqeg_8E-UyK0'
   }
 ];
 // Removes spaces from search terms
@@ -50,13 +50,19 @@ var PlaceData = function(data){
   this.address = ko.observable(data.address);
   this.city = ko.observable('Kelowna');
   this.province = ko.observable('British Columbia');
-  this.location = searchString(data.address) + '+Kelowna+British+Columbia';
+  this.location = searchString(data.name + ' ' + data.address) + '+Kelowna+British+Columbia';
+  this.svLoc = searchString(data.address) + '+Kelowna+British+Columbia';
   this.yelp = ko.observable(0);
-  this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.location + ' width="350px"');
+  this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.svLoc + ' width="350px"');
   this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
   this.markerId = ko.observable(0);
   this.gPlace = ko.observable(0);
   this.gData = ko.observable(0);
+  this.lat = ko.observable(0);
+  this.lng = ko.observable(0);
+  this.rating = ko.computed(function() {
+    return ((this.gData().rating + this.yelp().rating)/2);
+  }, this);
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -140,24 +146,16 @@ var nonce_generate = function(){
 
 
 // Map stuff
-var placeScrape = function(i){
-  var url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + places()[i].gPlace().place_id + '&key=' + GOOGLEMAP_API;
 
-  $.getJSON(url, function(data) {
-    places()[i].gData(data);
-    console.log(data);
-  }).error(function(e){
-    console.log('Silly Rabbit tricks are for kids!');
-  });
-};
 // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
 
-var HandleInfoWindow = function(latLng, content) {
+var HandleInfoWindow = function(place, content) {
     var position = {
-      'lat': latLng.latitude,
-      'lng': latLng.longitude
+      'lat': place.lat(),
+      'lng': place.lng()
     };
+
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
@@ -166,19 +164,18 @@ var HandleInfoWindow = function(latLng, content) {
 var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
-    var data;
     for (var i in places()){
-      if (results[0].name.toLowerCase() == places()[i].address().toLowerCase()){
+      if (results[0].name.toLowerCase() == places()[i].name().toLowerCase()){
         createMapMarker(results[0], i);
         places()[i].gPlace(results[0]);
-        pinPoster2(results[0].place_id, i);
+        places()[i].lat(results[0].geometry.location.lat());
+        places()[i].lng(results[0].geometry.location.lng());
+        places()[i].gData({
+          'photos': results[0].photos,
+          'rating': results[0].rating
+        });
       }
     }
-  }
-};
-var callback2 = function(place, status, p) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    places()[p].gData(place);
   }
 };
 var createMapMarker = function(obj, p) {
@@ -206,10 +203,7 @@ var createMapMarker = function(obj, p) {
   // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
   // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
   google.maps.event.addListener(marker, 'click', function(evt) {
-    console.log(marker.position);
-    console.log(places()[p].yelp().location.coordinate);
-    console.log(evt);
-    HandleInfoWindow(places()[p].yelp().location.coordinate, contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
+    HandleInfoWindow(places()[p], contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
     if (marker.getAnimation() !== null) {
       marker.setAnimation(null);
     } else {
@@ -239,19 +233,6 @@ var createMapMarker = function(obj, p) {
   // center the map
   map.setCenter(bounds.getCenter());
 };
-var pinPoster2 = function(place_id, i) {
-  // creates a Google place search service object. PlacesService does the work of
-  // actually searching for location data.
-  var service = new google.maps.places.PlacesService(map);
-  // Iterates through the array of locations, creates a search object for each location
-  var request = {
-    query: place_id
-  };
-    // Actually searches the Google Maps API for location data and runs the callback
-    // function with the search results after each search.
-  service.getDetails(request, callback2, i);
-
-};
 var pinPoster = function() {
   // creates a Google place search service object. PlacesService does the work of
   // actually searching for location data.
@@ -264,6 +245,7 @@ var pinPoster = function() {
     };
     // Actually searches the Google Maps API for location data and runs the callback
     // function with the search results after each search.
+    //service.getDetails(request, callback);
     service.textSearch(request, callback);
   }
 };
@@ -277,7 +259,6 @@ var initializeMap = function(){
     window.mapBounds = new google.maps.LatLngBounds();
     // pinPoster() creates pins on the map for each location
     pinPoster();
-    pinPoster2();
 };
 
 // Loads map and other content
