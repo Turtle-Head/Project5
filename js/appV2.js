@@ -63,6 +63,12 @@ var PlaceData = function(data){
   this.rating = ko.computed(function() {
     return ((this.gData().rating + this.yelp().rating)/2);
   }, this);
+  if(this.gData().photo){
+    this.photo = ko.computed(function() {
+      var url = this.gData().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100});
+      return url;
+    }, this);
+  }
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -185,11 +191,19 @@ var createMapMarker = function(obj, p) {
   var name = obj.formatted_address;   // name of the place from the place service
   var bounds = window.mapBounds;            // current boundaries of the map window
   // marker is an object with additional data about the pin for a single location
+  var icn;
+  var photos = obj.photos;
+  if(!photos){
+    icn = 'img/marker.png';
+  } else {
+    icn = photos[0].getUrl({'maxWidth': 35, 'maxHeight': 35});
+  }
   var marker = new google.maps.Marker({
     map: map,
     position: obj.geometry.location,
     animation: google.maps.Animation.DROP,
-    title: name
+    title: name,
+    icon: icn
   });
   places()[p].markerId(marker);
   // infoWindows are the little helper windows that open when you click
