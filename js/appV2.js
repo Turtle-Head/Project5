@@ -1,32 +1,32 @@
 // Author:James Fehr
-// Date:December 29, 2015
+// Date:December 29, 2015  Edit: Ongoing
 // Project 5: Neighborhood Map
 var map;
 var pDmodel = [
   {
     'name': 'Bohemian Cafe & Catering Company',
     'address': '524 Bernard Ave',
-    'id': 'tgfp'
+    'id': 'ChIJNR-8ZKj0fVMRUTly1t01rtc'
   },
   {
     'name': 'Mad Mango Cafe',
     'address': '551 Bernard Ave',
-    'id': 'mmc'
+    'id': 'ChIJ0RjRaaj0fVMRJtulviLYwuo'
   },
   {
-    'name': 'Bean Scene Downtown',
+    'name': 'The Bean Scene Coffee House',
     'address': '274 Bernard Ave',
-    'id': 'bsd'
+    'id': 'ChIJB2yMA6b0fVMRIk_JoBlIjxg'
   },
   {
     'name': 'Mosaic Books',
     'address': '411 Bernard Ave',
-    'id': 'mosaic'
+    'id': 'ChIJ_1Wqnqj0fVMRoYgRc9oy_Zg'
   },
   {
     'name': 'The Royal Anne Hotel',
     'address': '348 Bernard Ave',
-    'id': 'lcp'
+    'id': 'ChIJK-KSIKb0fVMRqeg_8E-UyK0'
   }
 ];
 // Removes spaces from search terms
@@ -50,11 +50,19 @@ var PlaceData = function(data){
   this.address = ko.observable(data.address);
   this.city = ko.observable('Kelowna');
   this.province = ko.observable('British Columbia');
-  this.location = searchString(data.address) + '+Kelowna+British+Columbia';
+  this.location = searchString(data.name + ' ' + data.address) + '+Kelowna+British+Columbia';
+  this.svLoc = searchString(data.address) + '+Kelowna+British+Columbia';
   this.yelp = ko.observable(0);
-  this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.location + ' width="350px"');
+  this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.svLoc + ' width="350px"');
   this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
   this.markerId = ko.observable(0);
+  this.gPlace = ko.observable(0);
+  this.gData = ko.observable(0);
+  this.lat = ko.observable(0);
+  this.lng = ko.observable(0);
+  this.rating = ko.computed(function() {
+    return ((this.gData().rating + this.yelp().rating)/2);
+  }, this);
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -97,6 +105,7 @@ var PlaceData = function(data){
   };
   $.ajax(settings);
   // End Yelp Call
+
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
     $('#yelp').show();  // show Yelp Panel
@@ -141,11 +150,12 @@ var nonce_generate = function(){
 // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
 
-var HandleInfoWindow = function(latLng, content) {
+var HandleInfoWindow = function(place, content) {
     var position = {
-      'lat': latLng.latitude,
-      'lng': latLng.longitude
+      'lat': place.lat(),
+      'lng': place.lng()
     };
+
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
@@ -155,8 +165,15 @@ var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
     for (var i in places()){
-      if (results[0].name.toLowerCase() == places()[i].address().toLowerCase()){
+      if (results[0].name.toLowerCase() == places()[i].name().toLowerCase()){
         createMapMarker(results[0], i);
+        places()[i].gPlace(results[0]);
+        places()[i].lat(results[0].geometry.location.lat());
+        places()[i].lng(results[0].geometry.location.lng());
+        places()[i].gData({
+          'photos': results[0].photos,
+          'rating': results[0].rating
+        });
       }
     }
   }
@@ -186,10 +203,7 @@ var createMapMarker = function(obj, p) {
   // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
   // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
   google.maps.event.addListener(marker, 'click', function(evt) {
-    console.log(marker.position);
-    console.log(places()[p].yelp().location.coordinate);
-    console.log(evt);
-    HandleInfoWindow(places()[p].yelp().location.coordinate, contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
+    HandleInfoWindow(places()[p], contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
     if (marker.getAnimation() !== null) {
       marker.setAnimation(null);
     } else {
@@ -231,6 +245,7 @@ var pinPoster = function() {
     };
     // Actually searches the Google Maps API for location data and runs the callback
     // function with the search results after each search.
+    //service.getDetails(request, callback);
     service.textSearch(request, callback);
   }
 };
