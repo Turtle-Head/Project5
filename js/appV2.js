@@ -218,13 +218,7 @@ var createMapMarker = function(obj, p) {
   var name = obj.formatted_address;   // name of the place from the place service
   var bounds = window.mapBounds;            // current boundaries of the map window
   // marker is an object with additional data about the pin for a single location
-  var icn;
-  var photos = obj.photos;
-  if(!photos){
-    icn = 'img/marker.png';
-  } else {
-    icn = photos[0].getUrl({'maxWidth': 35, 'maxHeight': 35});
-  }
+  var icn = 'img/marker.png';
   var marker = new google.maps.Marker({
     map: map,
     position: obj.geometry.location,
