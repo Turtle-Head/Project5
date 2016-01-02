@@ -132,10 +132,11 @@ var ViewModel = function() {
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
-  this.clickCount = ko.observable(0);
+  this.filterData = ko.observable('');
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
   initializeMap();
+  $('#filter').click(filter_data());
 };
 
 // nonce_generate is needed for Yelp to use oAuth correctly
@@ -153,7 +154,9 @@ var nonce_generate = function(){
 
 // Map stuff
 // Marker functions *********************************
-
+var filter_data = function(){
+  console.log(filterData());
+};
 // Adds a marker to the map and push to the array.
 function addMarker(location) {
   var marker = new google.maps.Marker({
@@ -257,9 +260,6 @@ var createMapMarker = function(obj, p) {
   });
   google.maps.event.addListener(infoWindow,'closeclick',function(){
    $('#yelp').hide();
-   if (marker.getAnimation() !== null){
-     marker.setAnimation(null);
-   }
   });
   // this is where the pin actually gets added to the map.
   // bounds.extend() takes in a map location object
