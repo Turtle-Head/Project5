@@ -288,9 +288,10 @@ var pinPoster = function() {
 var initializeMap = function(){
     var mapOptions = {
       disableDefaultUI: false,
-      noClear: false,
       mapTypeId: google.maps.MapTypeId.HYBRID,
-      tilt: 45
+      scrollwheel: false,
+      scaleControl: false,
+      zoomControl: false
     };
     map = new google.maps.Map(document.querySelector('#map'), mapOptions);
 
