@@ -152,7 +152,34 @@ var nonce_generate = function(){
 
 
 // Map stuff
+// Marker functions *********************************
 
+// Adds a marker to the map and push to the array.
+function addMarker(location) {
+  var marker = new google.maps.Marker({
+    position: location,
+    map: map
+  });
+  markers.push(marker);
+}
+
+// Sets the map on all markers in the array.
+function setMapOnAll(map) {
+  for (var i in places()) {
+    places()[i].markerId().setMap(map);
+  }
+}
+
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+  setMapOnAll(null);
+}
+
+// Shows any markers currently in the array.
+function showMarkers() {
+  setMapOnAll(map);
+}
+// End Marker Functions *********************************
 // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
 
@@ -223,6 +250,7 @@ var createMapMarker = function(obj, p) {
     } else {
       marker.setAnimation(google.maps.Animation.BOUNCE);
     }
+
     self.currentYelp(places()[p]); // sets current pushed button as yelp panel info
     $('#yelp').show();
     $('#yelpTog').click(function(){
@@ -266,9 +294,13 @@ var pinPoster = function() {
 var initializeMap = function(){
     var mapOptions = {
       disableDefaultUI: false,
-      noClear: true
+      noClear: false,
+      mapTypeId: google.maps.MapTypeId.HYBRID,
+      tilt: 45
     };
     map = new google.maps.Map(document.querySelector('#map'), mapOptions);
+
+
     // Sets the boundaries of the map based on pin locations
     window.mapBounds = new google.maps.LatLngBounds();
     // pinPoster() creates pins on the map for each location
