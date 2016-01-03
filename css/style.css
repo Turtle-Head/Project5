@@ -102,6 +102,11 @@ p{
   border-color: orange;
   font-size: 1.5em;
 }
+.g-rate{
+  padding: 10px;
+  margin: 5px;
+  font-size: 2em;
+}
 .phone{
   padding: 10px;
   margin: 5px;
