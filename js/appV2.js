@@ -54,7 +54,7 @@ var PlaceData = function(data){
   this.svLoc = searchString(data.address) + '+Kelowna+British+Columbia';
   this.yelp = ko.observable(0);
   this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.svLoc + ' width="350px"');
-  this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
+
   this.markerId = ko.observable(0);
   this.gPlace = ko.observable(0);
   this.gData = ko.observable(0);
@@ -63,6 +63,19 @@ var PlaceData = function(data){
   this.rating = ko.computed(function() {
     return ((this.gData().rating + this.yelp().rating)/2);
   }, this);
+  this.types = ko.computed(function() {
+    var tp = [];
+    for (var i in this.gPlace().types){
+      tp.push(this.gPlace().types[i]);
+    }
+    for (var y in this.yelp().categories){
+      for (var n in this.yelp().categories[y]){
+        tp.push(this.yelp().categories[y][n]);
+      }
+    }
+    return tp;
+  }, this);
+  this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
   if(this.gData().photo){
     this.photo = ko.computed(function() {
       var url = this.gData().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100});
@@ -155,33 +168,32 @@ var nonce_generate = function(){
 // Map stuff
 // Marker functions *********************************
 var filter_data = function(){
-  console.log(filterData());
+
 };
-// Adds a marker to the map and push to the array.
-function addMarker(location) {
-  var marker = new google.maps.Marker({
-    position: location,
-    map: map
-  });
-  markers.push(marker);
-}
+
+// Set marker array on map
+var disp_filter = function(markers){
+  for (var i in markers){
+    markers[i].markerId().setMap(map);
+  }
+};
 
 // Sets the map on all markers in the array.
-function setMapOnAll(map) {
+var setMapOnAll = function(map) {
   for (var i in places()) {
     places()[i].markerId().setMap(map);
   }
-}
+};
 
 // Removes the markers from the map, but keeps them in the array.
-function clearMarkers() {
+var clearMarkers = function() {
   setMapOnAll(null);
-}
+};
 
 // Shows any markers currently in the array.
-function showMarkers() {
+var showMarkers = function() {
   setMapOnAll(map);
-}
+};
 // End Marker Functions *********************************
 // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
@@ -191,7 +203,7 @@ var HandleInfoWindow = function(place, content) {
       'lat': place.lat(),
       'lng': place.lng()
     };
-
+    content += '<div class="g-rate">Gelp rating: ' + place.rating() + '</div><div>' + place.yelp().snippet_text + '</div>';
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
