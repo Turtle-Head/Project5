@@ -45,7 +45,8 @@ var searchString = function(e) {
 
 var PlaceData = function(data){
   var PD = this;
-  this.id = data.id; // Button and div ID to show or hide content
+  this.id = data.id; // Google Places ID for data lookup
+  this.vis = ko.observable(true); // sets visibility
   this.name = ko.observable(data.name);
   this.address = ko.observable(data.address);
   this.city = ko.observable('Kelowna');
@@ -149,7 +150,12 @@ var ViewModel = function() {
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
   initializeMap();
-  $('#filter').click(filter_data());
+  //$('#filter').click(filter_data());
+  var terms = filter_data();
+  var filter_terms = filter_data();
+
+  console.log('Terms Returned');
+  console.log(terms);
 };
 
 // nonce_generate is needed for Yelp to use oAuth correctly
@@ -163,12 +169,32 @@ var nonce_generate = function(){
   }
   return text;
 };
-
-
+// Converts an array into an Object for string comparison
+// How to use: if( name in oc(['bobby', 'sue','smith']) ) { ... }
+// {SRC #004: 'http://snook.ca/archives/javascript/testing_for_a_v'}
+var oc = function(a) {
+  var o = {};
+  for(var i=0;i<a.length;i++) {
+    o[a[i]]='';
+  }
+  return o;
+};
 // Map stuff
 // Marker functions *********************************
 var filter_data = function(){
+    var ft = [];
 
+    for (var c in places()) {
+      for (var x in places()[c].types()) {
+        if(places()[c].types()[x] in oc(ft)){
+          console.log(c + ',' + x);
+          } else {
+            ft.push(places()[c].types()[x]);
+        }
+      }
+    }
+    console.log(ft);
+    return ft;
 };
 
 // Set marker array on map
@@ -203,7 +229,7 @@ var HandleInfoWindow = function(place, content) {
       'lat': place.lat(),
       'lng': place.lng()
     };
-    content += '<div class="g-rate">Gelp rating: ' + place.rating() + '</div><div>' + place.yelp().snippet_text + '</div>';
+    content += '<div class="g-rate">Gelp rating: ' + place.rating() + '</div>';
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
