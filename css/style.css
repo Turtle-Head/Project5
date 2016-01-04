@@ -10,11 +10,10 @@ div{
 }
 #map{
   height: 400px;
-  width: 79%;
+  width: 100%;
   background-color: #CCC;
   align-content: flex-end;
   display:inline-block;
-  z-index: 101;
 }
 .flex{
   display: flex;
