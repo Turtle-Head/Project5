@@ -150,12 +150,6 @@ var ViewModel = function() {
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
   initializeMap();
-  //$('#filter').click(filter_data());
-  var terms = filter_data();
-  var filter_terms = filter_data();
-
-  console.log('Terms Returned');
-  console.log(terms);
 };
 
 // nonce_generate is needed for Yelp to use oAuth correctly
@@ -181,20 +175,25 @@ var oc = function(a) {
 };
 // Map stuff
 // Marker functions *********************************
+// Checks types array in the places array for places matching the filter terms
+// If matched, the place is pushed into a marker array for the map
 var filter_data = function(){
-    var ft = [];
-
-    for (var c in places()) {
-      for (var x in places()[c].types()) {
-        if(places()[c].types()[x] in oc(ft)){
-          console.log(c + ',' + x);
-          } else {
-            ft.push(places()[c].types()[x]);
+  var markers = [];
+  if (filterData()) {
+    for (var c in places()){
+      if (filterData() in oc(places()[c].types())){
+        markers.push(places()[c]);
+      } else {
+        if (filterData() in oc(places()[c].name())){
+          markers.push(places()[c]);
         }
       }
     }
-    console.log(ft);
-    return ft;
+    clearMarkers();
+    disp_filter(markers);
+  } else {
+    showMarkers();
+  }
 };
 
 // Set marker array on map
