@@ -153,10 +153,10 @@ var ViewModel = function() {
   $('#yelp').hide();
   $('#menu_rate').hide();
   initializeMap();
-  this.user_filter = ko.observable('');
+  this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
     for (var c in places()){
-      if (user_input() in oc(places()[c].types())){
+      if (user_filter() in oc(places()[c].types())){
         markers.push(places()[c]);
       } else if (user_input() in oc(places()[c].name())){
         markers.push(places()[c]);
@@ -164,7 +164,8 @@ var ViewModel = function() {
     }
     disp_filter(markers);
     this.user_filter(user_input());
-    return user_input();
+    $('#reset_filter').click(user_filter(""));
+    return user_filter();
   }, this);
 };
 var user_input = ko.observable("");
