@@ -2,7 +2,6 @@
 // Date:December 29, 2015  Edit: Ongoing
 // Project 5: Neighborhood Map
 var map;
-var markers = [];
 var pDmodel = [
   {
     'name': 'Bohemian Cafe & Catering Company',
@@ -149,28 +148,32 @@ var ViewModel = function() {
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
+  this.user_input = ko.observable(" ");
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
   $('#menu_rate').hide();
   initializeMap();
+
   this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
-    markers = [];
-    clearMarkers();
-    for (var c in places()){
-      if (user_input() in oc(places()[c].types())){
-        markers.push(places()[c]);
-      } else if (user_input() in oc(places()[c].name())){
-        markers.push(places()[c]);
+    if (places().length > 0) {
+      for (var c in places()){
+        if (user_input() in oc(places()[c].types())){
+          places()[c].vis(true);
+        } else if (user_input() in oc(places()[c].name())){
+          places()[c].vis(true);
+        } else {
+          places()[c].vis(false);
+        }
+        if (places()[c].vis()) places()[c].markerId().setMap(map);
       }
     }
-    disp_filter(markers);
     this.user_filter(user_input());
     $('#reset_filter').click(function(){user_input(" ");});
     return user_filter();
   }, this);
 };
-var user_input = ko.observable("");
+
 // nonce_generate is needed for Yelp to use oAuth correctly
 var nonce_generate = function(){
   var length = (Math.floor(Math.random() * 32)) + (Math.floor(Math.random() * 32));
@@ -193,34 +196,7 @@ var oc = function(a) {
   return o;
 };
 // Map stuff
-// Marker functions *********************************
 
-// Set marker array on map
-var disp_filter = function(markers){
-  for (var i in markers){
-    markers[i].markerId().setMap(map);
-    console.log('Markers:');
-    console.log(markers);
-  }
-};
-
-// Sets the map on all markers in the array.
-var setMapOnAll = function(map) {
-  for (var i in places()) {
-    places()[i].markerId().setMap(map);
-  }
-};
-
-// Removes the markers from the map, but keeps them in the array.
-var clearMarkers = function() {
-  setMapOnAll(null);
-};
-
-// Shows any markers currently in the array.
-var showMarkers = function() {
-  setMapOnAll(map);
-};
-// End Marker Functions *********************************
 // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
 
