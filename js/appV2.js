@@ -155,6 +155,8 @@ var ViewModel = function() {
   initializeMap();
   this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
+    markers = [];
+    clearMarkers();
     for (var c in places()){
       if (user_input() in oc(places()[c].types())){
         markers.push(places()[c]);
@@ -164,7 +166,7 @@ var ViewModel = function() {
     }
     disp_filter(markers);
     this.user_filter(user_input());
-    //$('#reset_filter').click(user_filter(""));
+    $('#reset_filter').click(function(){user_input(" ");});
     return user_filter();
   }, this);
 };
@@ -197,6 +199,8 @@ var oc = function(a) {
 var disp_filter = function(markers){
   for (var i in markers){
     markers[i].markerId().setMap(map);
+    console.log('Markers:');
+    console.log(markers);
   }
 };
 
