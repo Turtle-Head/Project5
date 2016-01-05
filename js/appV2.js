@@ -165,7 +165,12 @@ var ViewModel = function() {
         } else {
           places()[c].vis(false);
         }
-        if (places()[c].vis()) places()[c].markerId().setMap(map);
+        if (places()[c].vis()) {
+          places()[c].markerId().setMap(map);
+        }
+        else {
+          places()[c].markerId().setMap(null);
+        }
       }
     }
     this.user_filter(user_input());
