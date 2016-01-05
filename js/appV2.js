@@ -179,6 +179,14 @@ var ViewModel = function() {
   }, this);
 };
 
+// String Comparison truthy falsy return for indexOf
+// Takes in 2 strings as parameters, returns true if parameter b is found in parameter a
+var stringFinder = function(a, b) {
+  if (a.indexOf(b) >= 0) {
+    return true;
+  } else return false;
+};
+
 // nonce_generate is needed for Yelp to use oAuth correctly
 var nonce_generate = function(){
   var length = (Math.floor(Math.random() * 32)) + (Math.floor(Math.random() * 32));
