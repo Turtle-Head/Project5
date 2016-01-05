@@ -41,7 +41,7 @@
       <div class="flex">
         <p>
           <button id="yelpTog">Close</button>
-          <input class="textArea" width="80%" type="textInput: user_filter"/>
+          <input class="textArea" width="80%" data-bind="textInput: user_input"/>
           <button class="button" id="reset_filter">Reset Filter</button>
         </p>
         <div class="rate">Current Filter: <span data-bind="text: user_filter"></span></div>
@@ -72,7 +72,6 @@
           </div>
         </div>
       </div>
-      <ul><li data-bind="forEach: filter_terms"></li></ul>
     </div>
     <!--Application Scripts Go Here-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
