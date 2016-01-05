@@ -159,17 +159,17 @@ var ViewModel = function() {
     if (places().length > 0) {
       for (var c in places()){
         if (user_input() in oc(places()[c].types())){
-          places()[c].vis(true);
+          self.places()[c].vis(true);
         } else if (user_input() in oc(places()[c].name())){
-          places()[c].vis(true);
+          self.places()[c].vis(true);
         } else {
-          places()[c].vis(false);
+          self.places()[c].vis(false);
         }
-        if (places()[c].vis()) {
-          places()[c].markerId().setMap(map);
+        if (places()[c].vis() && places()[c].markerId()){
+          self.places()[c].markerId().setMap(map);
         }
-        else {
-          places()[c].markerId().setMap(null);
+        else if (!places()[c].vis() && places()[c].markerId()) {
+          self.places()[c].markerId().setMap(null);
         }
       }
     }
