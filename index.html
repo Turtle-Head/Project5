@@ -20,27 +20,29 @@
         </div>
       </div>
       <div class="flex">
-
-      <table>
-        <thead>
-          <tr><th class="ham_menu_head">Locations</th></tr>
-        </thead>
-        <tbody data-bind="foreach: places">
-          <tr><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
-        </tbody>
-      </table>
-      <!--<div class="flexHead">
-        <ul class="ham_menu_head" data-bind="foreach: places">
-            <li class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></li>
-          </ul>-->
-          <div id="map"></div>
+        <div class="menu_elem">
+          <table>
+            <thead>
+              <tr><th class="ham_menu_head">Locations</th></tr>
+            </thead>
+            <tbody data-bind="foreach: places">
+              <tr><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
+            </tbody>
+          </table>
+          <div id="menu_rate">
+            <div class="rate">Gelp Rating:</div>
+            <div class="rate" data-bind="text: currentYelp().rating"></div>
+          </div>
+        </div>
+        <div id="map"></div>
       </div>
 
       <div class="flex">
         <p>
           <button id="yelpTog">Close</button>
-          <input class="textArea" width="400px" type="textInput: filterData, filter_data"></input>
+          <input class="textArea" width="80%" type="textInput: user_input"/>
         </p>
+        <div>Current Filter: <span data-bind="text: user_filter"></span></div>
       </div>
       <div id="yelp" data-bind="with: currentYelp">
         <img class="images" src=""data-bind="photo">

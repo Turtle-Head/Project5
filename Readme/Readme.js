@@ -53,10 +53,10 @@ This paired well with snippets from source #001 to create a funtionaly working n
 
 Map Functions:
 Previous project Online Resume V2
+
 #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
 
-Wikipedia Functions:
-minicourse-ajax-project for the Intro to Ajax Udacity Course
+#004: 'http://snook.ca/archives/javascript/testing_for_a_v'
 
 ----------------------------------------
 Current Issues:
