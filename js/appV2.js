@@ -2,6 +2,7 @@
 // Date:December 29, 2015  Edit: Ongoing
 // Project 5: Neighborhood Map
 var map;
+var markers = [];
 var pDmodel = [
   {
     'name': 'Bohemian Cafe & Catering Company',
@@ -129,8 +130,10 @@ var PlaceData = function(data){
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
     $('#yelp').show();  // show Yelp Panel
+    $('#menu_rate').show();
     $('#yelpTog').click(function(){
       $('#yelp').hide();
+      $('#menu_rate').hide();
     });
     google.maps.event.trigger(this.markerId(),'click');
   };
@@ -146,12 +149,25 @@ var ViewModel = function() {
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
-  this.filterData = ko.observable('');
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
+  $('#menu_rate').hide();
   initializeMap();
+  this.user_filter = ko.observable('');
+  this.filterData = ko.computed(function(){
+    for (var c in places()){
+      if (user_input() in oc(places()[c].types())){
+        markers.push(places()[c]);
+      } else if (user_input() in oc(places()[c].name())){
+        markers.push(places()[c]);
+      }
+    }
+    disp_filter(markers);
+    this.user_filter(user_input());
+    return user_input();
+  }, this);
 };
-
+var user_input = ko.observable("");
 // nonce_generate is needed for Yelp to use oAuth correctly
 var nonce_generate = function(){
   var length = (Math.floor(Math.random() * 32)) + (Math.floor(Math.random() * 32));
@@ -175,26 +191,6 @@ var oc = function(a) {
 };
 // Map stuff
 // Marker functions *********************************
-// Checks types array in the places array for places matching the filter terms
-// If matched, the place is pushed into a marker array for the map
-var filter_data = function(){
-  var markers = [];
-  if (filterData()) {
-    for (var c in places()){
-      if (filterData() in oc(places()[c].types())){
-        markers.push(places()[c]);
-      } else {
-        if (filterData() in oc(places()[c].name())){
-          markers.push(places()[c]);
-        }
-      }
-    }
-    clearMarkers();
-    disp_filter(markers);
-  } else {
-    showMarkers();
-  }
-};
 
 // Set marker array on map
 var disp_filter = function(markers){
@@ -232,6 +228,7 @@ var HandleInfoWindow = function(place, content) {
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
+    $('#menu_rate').show();
 };
 // *********************************************
 var callback = function(results, status) {
@@ -297,6 +294,7 @@ var createMapMarker = function(obj, p) {
   });
   google.maps.event.addListener(infoWindow,'closeclick',function(){
    $('#yelp').hide();
+   $('#menu_rate').hide();
   });
   // this is where the pin actually gets added to the map.
   // bounds.extend() takes in a map location object
