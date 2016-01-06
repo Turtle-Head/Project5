@@ -72,22 +72,6 @@ p{
   font-size: 1.25em;
   font-style: oblique;
 }
-.button{
-  border: 1px;
-  width: 15%;
-  color: white;
-  background-color: red;
-  display: inline;
-  border-radius: 10px;
-  margin: 2%;
-  margin-top: 5px;
-  text-align: center;
-  font-size: 1em;
-  font-style: oblique;
-  -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
-  -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
-  box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
-}
 .button:hover,
 .button:focus,
 #yelpTog:hover,
@@ -116,12 +100,6 @@ p{
   font-style: oblique;
   font-size: 1.5em;
 }
-.snip,
-#snippet{
-  padding: 10px;
-  margin: 5px;
-  font-size: 1.5em;
-}
 h2,
 #biz_name{
   font-size: 2em;
@@ -143,6 +121,7 @@ h1{
   background-color: #2AA1EB;
   border: 3px;
 }
+.button,
 #yelpTog{
   border: 1px;
   color: white;
