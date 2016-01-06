@@ -42,7 +42,6 @@ var searchString = function(e) {
   return(e);
 };
 // Constructor for Model Data
-
 var PlaceData = function(data){
   var PD = this;
   this.id = data.id; // Google Places ID for data lookup
@@ -156,9 +155,11 @@ var ViewModel = function() {
   $('#yelp').hide();
   $('#menu_rate').hide();
   MapViewModel();
-
+  // Filters location list for user_input
   this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
+    // Checks user_input to determine if the user has entered any terms, additionally checks places() to determine if the array is populated yet
+    // Show all markers if filter is empty
     if ((user_input().length === 0) && (places().length > 0)) {
       for (var a in places()) {
         places()[a].vis(true);
@@ -168,6 +169,7 @@ var ViewModel = function() {
       }
     } else if (places().length > 0) {
         for (var c in places()){
+          // Quick search for any input matches, toggles marker visible if found and not visible if not found
           if (user_input() in oc(places()[c].types())){
             self.places()[c].vis(true);
           } else if (user_input() in oc(places()[c].name())){
@@ -175,6 +177,7 @@ var ViewModel = function() {
           } else {
             self.places()[c].vis(false);
           }
+          // Sort through the remaining non-visible markers to find additinoal matches and toggle them visible
           for (var d in places()[c].types()){
             if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
               self.places()[c].vis(true);
@@ -186,9 +189,10 @@ var ViewModel = function() {
           if (stringFinder((self.places()[c].address()).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
             self.places()[c].vis(true);
           }
+          // Shows markers if toggled visible
           if (places()[c].vis() && places()[c].markerId()){
             self.places()[c].markerId().setMap(map);
-          }
+          } //Hides markers if toggled not visible
           else if (!places()[c].vis() && places()[c].markerId()) {
             self.places()[c].markerId().setMap(null);
         }
@@ -199,7 +203,6 @@ var ViewModel = function() {
     return user_filter();
   }, this);
 };
-
 // String Comparison truthy falsy return for indexOf
 // Takes in 2 strings as parameters, returns true if parameter b is found in parameter a
 var stringFinder = function(a, b) {
@@ -207,7 +210,6 @@ var stringFinder = function(a, b) {
     return true;
   } else return false;
 };
-
 // nonce_generate is needed for Yelp to use oAuth correctly
 var nonce_generate = function(){
   var length = (Math.floor(Math.random() * 32)) + (Math.floor(Math.random() * 32));
@@ -230,25 +232,27 @@ var oc = function(a) {
   return o;
 };
 // Map stuff
-
 // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
 var infoWindow;
-
+// Creates the infoWindow based on data in the model, shows the marker
 var HandleInfoWindow = function(place, content) {
     var position = {
       'lat': place.lat(),
       'lng': place.lng()
     };
+    // Checking for business url
     if (place.gPlace().website){
       content += '<a href="' + place.gPlace().website + '" class="g-rate">' + place.name() + '</a><div class="g-rate">' + place.address() + '</div>';
     } else {
       content += '<div class="g-rate">' + place.name() + '</div><div class="g-rate">' + place.address() + '</div>';
     }
+    // Checking for photos from google place service
     if ((typeof place.gPlace().photos) !== 'undefined'){
       content += '<img src="' + place.gPlace().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" class="images">';
     } else {
       content += '<img src="' + place.locImg() + '" class="images">';
     }
+    // Checking for reviews from google place service
     if (place.gPlace().reviews.length > 0) {
       content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div>';
     }
@@ -257,14 +261,15 @@ var HandleInfoWindow = function(place, content) {
     infoWindow.open(map);
     $('#menu_rate').show();
 };
-// *********************************************
 var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
     for (var i in places()){
       if (results.name.toLowerCase() == places()[i].name().toLowerCase()){
+        // Stores results for later use
         places()[i].gPlace(results);
         createMapMarker(results, i);
+        // Creates positional data holder for ease of use
         places()[i].lat(results.geometry.location.lat());
         places()[i].lng(results.geometry.location.lng());
       }
@@ -327,76 +332,76 @@ var createMapMarker = function(obj, p) {
 };
 
 var MapViewModel = function(){
-    // {Styles SRC #005: 'https://mapbuildr.com/buildr'}
-    var mapOptions = {
-      disableDefaultUI: false,
-      mapTypeId: google.maps.MapTypeId.HYBRID,
-      scrollwheel: false,
-      scaleControl: false,
-      zoomControl: false,
-      styles: [
-        {
-          "featureType": "water",
-          "elementType": "geometry",
-          "stylers": [{ "color": "#193341" }]
-        },
-        {
-          "featureType": "landscape",
-          "elementType": "geometry",
-          "stylers": [{ "color": "#2c5a71" }]
-        },
-        {
-          "featureType": "road",
-          "elementType": "geometry",
-          "stylers": [{ "color": "#29768a"},{"lightness": -37 }]
-        },
-        {
-          "featureType": "poi",
-          "elementType": "geometry",
-          "stylers": [{ "color": "#406d80" }]
-        },
-        {
-          "featureType": "transit",
-          "elementType": "geometry",
-          "stylers": [{ "color": "#406d80" }]
-        },
-        {
-          "elementType": "labels.text.stroke",
-          "stylers": [{ "visibility": "on" },{ "color": "#3e606f" },{ "weight": 2 },{ "gamma": 0.84 }]
-        },
-        {
-          "elementType": "labels.text.fill",
-          "stylers": [{ "color": "#ffffff" }]
-        },
-        {
-          "featureType": "administrative",
-          "elementType": "geometry",
-          "stylers": [{ "weight": 0.6 },{ "color": "#1a3541" }]
-        },
-        {
-          "elementType": "labels.icon",
-          "stylers": [{ "visibility": "off" }]
-        },
-        {
-          "featureType": "poi.park",
-          "elementType": "geometry",
-          "stylers": [{ "color": "#2c5a71" }]
-        }
-      ]
+  // {Styles SRC #005: 'https://mapbuildr.com/buildr'}
+  var mapOptions = {
+    disableDefaultUI: false,
+    mapTypeId: google.maps.MapTypeId.HYBRID,
+    scrollwheel: false,
+    scaleControl: false,
+    zoomControl: false,
+    styles: [
+      {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [{ "color": "#193341" }]
+      },
+      {
+        "featureType": "landscape",
+        "elementType": "geometry",
+        "stylers": [{ "color": "#2c5a71" }]
+      },
+      {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [{ "color": "#29768a"},{"lightness": -37 }]
+      },
+      {
+        "featureType": "poi",
+        "elementType": "geometry",
+        "stylers": [{ "color": "#406d80" }]
+      },
+      {
+        "featureType": "transit",
+        "elementType": "geometry",
+        "stylers": [{ "color": "#406d80" }]
+      },
+      {
+        "elementType": "labels.text.stroke",
+        "stylers": [{ "visibility": "on" },{ "color": "#3e606f" },{ "weight": 2 },{ "gamma": 0.84 }]
+      },
+      {
+        "elementType": "labels.text.fill",
+        "stylers": [{ "color": "#ffffff" }]
+      },
+      {
+        "featureType": "administrative",
+        "elementType": "geometry",
+        "stylers": [{ "weight": 0.6 },{ "color": "#1a3541" }]
+      },
+      {
+        "elementType": "labels.icon",
+        "stylers": [{ "visibility": "off" }]
+      },
+      {
+        "featureType": "poi.park",
+        "elementType": "geometry",
+        "stylers": [{ "color": "#2c5a71" }]
+      }
+    ]
+  };
+  map = new google.maps.Map(document.querySelector('#map'), mapOptions);
+  // Sets the boundaries of the map based on pin locations
+  window.mapBounds = new google.maps.LatLngBounds();
+  // Place Service for the getDetails google maps call
+  var service = new google.maps.places.PlacesService(map);
+  // Iterates through the array of locations, creates a search object for each location
+  for (var p in places()) {
+    // the search request object
+    var request = {
+      placeId: places()[p].id
     };
-    map = new google.maps.Map(document.querySelector('#map'), mapOptions);
-    // Sets the boundaries of the map based on pin locations
-    window.mapBounds = new google.maps.LatLngBounds();
-    // Place Service for the getDetails google maps call
-    var service = new google.maps.places.PlacesService(map);
-    // Iterates through the array of locations, creates a search object for each location
-    for (var p in places()) {
-      // the search request object
-      var request = {
-        placeId: places()[p].id
-      };
-      service.getDetails(request, callback);
-    }
+    service.getDetails(request, callback);
+  }
 };
 
 // Loads map and other content

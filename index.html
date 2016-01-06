@@ -19,6 +19,7 @@
           <h1>Neighborhood Map Project for the Udacity: Front End Nanodegree</h1>
         </div>
       </div>
+      <!--Menu and Map-->
       <div class="flex">
         <div class="menu_elem">
           <table>
@@ -33,12 +34,11 @@
             <div class="g-rate">Gelp Rating:
               <div class="flex2" data-bind="text: currentYelp().rating"></div>
             </div>
-            <!---->
           </div>
         </div>
-        <div id="map"></div>
+        <div id="map" class="map"></div>
       </div>
-
+      <!--Close panel button, filter textInput and reset filter button-->
       <div class="flex">
         <p class="flex2">
           <button class="button" id="yelpTog">Close</button>
@@ -46,6 +46,7 @@
           <button class="button" id="reset_filter">Reset Filter</button>
         </p>
       </div>
+      <!--Displays content from Yelp and Google Places Service-->
       <div id="yelp" data-bind="with: currentYelp">
         <div class="flex">
           <h2>Reviews:</h2>
@@ -71,9 +72,6 @@
             </div>
           </div>
         </div>
-        <!--Needs some work-->
-
-        <!---->
       </div>
     </div>
     <!--Application Scripts Go Here-->
@@ -82,7 +80,7 @@
     <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
     <script src="js/lib/oauth-signature.min.js"></script>
     <script src="js/keys.min.js"></script>
-    <script src="js/appV2.js"></script>
+    <script src="js/appV2.min.js"></script>
     <!---->
   </body>
 </html>

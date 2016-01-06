@@ -54,6 +54,7 @@ This paired well with snippets from source #001 to create a funtionaly working n
 Map Functions:
 Previous project Online Resume V2
 
+Handle infoWindow:
 #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
 
 #004: 'http://snook.ca/archives/javascript/testing_for_a_v'
