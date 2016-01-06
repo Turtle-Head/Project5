@@ -128,6 +128,7 @@ h1{
   width: 15%;
   text-align: center;
   font-style: oblique;
+  cursor: pointer;
   -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
   -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
   box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
@@ -139,4 +140,7 @@ h1{
   margin: 2%;
   font-style: italic;
   width: 40%;
+}
+tr {
+    cursor: pointer;
 }
