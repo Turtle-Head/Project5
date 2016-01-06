@@ -1,7 +1,7 @@
 body{
   font-family: monospace;
   size: 1.5em;
-  background-color: #EB742A;
+  background-color: #000033;
 }
 div{
   margin-bottom: 2px;
@@ -38,7 +38,7 @@ div{
   border: 3px;
   width: 100%;
   background-color: #2AA1EB;
-  color: #ff9933;
+  color: #000033;
   display: inline-grid;
   border-radius: 10px;
 }
@@ -113,7 +113,7 @@ h1{
 }
 .head{
   border-radius: 15px;
-  border-color: #EB742A;
+  border-color: #000033;
   background-color: #2AA1EB;
   border: 3px;
 }
