@@ -74,15 +74,15 @@ var PlaceData = function(data){
     }
     return tp;
   }, this);
-
+  var photos = ko.observableArray([]);
   // Gets URLs for all photos returned by the google details call
-  if(this.gPlace().photo){
-    this.photos = ko.computed(function() {
-      var urls = [];
-      for (var i in this.gPlace().photos)
-        urls.push(this.gPlace().photos[i].getUrl({'maxWidth': 350, 'maxHeight': 100}));
-      return urls;
-    }, this);
+  if (typeof(this.gPlace().photo) !== 'undefined'){
+    for (var i in this.gPlace().photos()) {
+      photos().push(this.gPlace().photos[i].getUrl({
+        'maxWidth': 350,
+        'maxHeight': 100
+      }));
+    }
   }
   //Begin Yelp Call
   // Randomize the nonce generator randomly
@@ -151,7 +151,7 @@ var ViewModel = function() {
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
-  this.user_input = ko.observable(" ");
+  this.user_input = ko.observable("");
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
   $('#menu_rate').hide();
@@ -159,25 +159,41 @@ var ViewModel = function() {
 
   this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
-    if (places().length > 0) {
-      for (var c in places()){
-        if (user_input() in oc(places()[c].types())){
-          self.places()[c].vis(true);
-        } else if (user_input() in oc(places()[c].name())){
-          self.places()[c].vis(true);
-        } else {
-          self.places()[c].vis(false);
+    if ((user_input().length === 0) && (places().length > 0)) {
+      for (var a in places()) {
+        places()[a].vis(true);
+        if (places()[a].markerId()) {
+          places()[a].markerId().setMap(map);
         }
-        if (places()[c].vis() && places()[c].markerId()){
-          self.places()[c].markerId().setMap(map);
-        }
-        else if (!places()[c].vis() && places()[c].markerId()) {
-          self.places()[c].markerId().setMap(null);
+      }
+    } else if (places().length > 0) {
+        for (var c in places()){
+          if (user_input() in oc(places()[c].types())){
+            self.places()[c].vis(true);
+          } else if (user_input() in oc(places()[c].name())){
+            self.places()[c].vis(true);
+          } else {
+            self.places()[c].vis(false);
+          }
+          for (var d in places()[c].types()){
+            if (stringFinder(places()[c].types()[d], user_input())) {
+              self.places()[c].vis(true);
+            }
+          }
+          if (stringFinder(places()[c].name(), user_input())) {
+            self.places()[c].vis(true);
+          }
+
+          if (places()[c].vis() && places()[c].markerId()){
+            self.places()[c].markerId().setMap(map);
+          }
+          else if (!places()[c].vis() && places()[c].markerId()) {
+            self.places()[c].markerId().setMap(null);
         }
       }
     }
     this.user_filter(user_input());
-    $('#reset_filter').click(function(){user_input(" ");});
+    $('#reset_filter').click(function(){user_input("");});
     return user_filter();
   }, this);
 };
@@ -231,7 +247,9 @@ var HandleInfoWindow = function(place, content) {
     } else {
       content += '<img src="' + place.locImg() + '" class="images">';
     }
-    content += '<div class="g-rate">Gelp rating: ' + place.rating() + '</div>';
+    if (place.gPlace().reviews.length > 0) {
+      content += '<div class="snip">' + place.gPlace().reviews[0].text + '</div>';
+    }
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
