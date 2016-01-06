@@ -21,7 +21,6 @@ div{
   flex-wrap: wrap;
   width: 100%;
 }
-#phone,
 .flex2{
   display: inline-block;
 }
@@ -73,13 +72,11 @@ p{
   font-style: oblique;
 }
 .button:hover,
-.button:focus,
-#yelpTog:hover,
-#yelpTog:focus{
+.button:focus {
   /*reduce the size of the shadow*/
-  -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
-  -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
-  box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+  -webkit-box-shadow: inset 0 1px 0 #3e9cbf, 0 2px 0 0 #205c73, 0 2px 5px #999;
+  -moz-box-shadow: inset 0 1px 0 #3e9cbf, 0 2px 0 0 #205c73, 0 2px 5px #999;
+  box-shadow: inset 0 1px 0 #3e9cbf, 0 2px 0 0 #205c73, 0 2px 5px #999;
 }
 .rate{
   padding: 10px;
@@ -100,8 +97,7 @@ p{
   font-style: oblique;
   font-size: 1.5em;
 }
-h2,
-#biz_name{
+h2{
   font-size: 2em;
   padding: 10px;
   margin: 2%;
@@ -121,8 +117,7 @@ h1{
   background-color: #2AA1EB;
   border: 3px;
 }
-.button,
-#yelpTog{
+.button{
   border: 1px;
   color: white;
   background-color: red;
