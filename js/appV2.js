@@ -176,11 +176,11 @@ var ViewModel = function() {
             self.places()[c].vis(false);
           }
           for (var d in places()[c].types()){
-            if (stringFinder(places()[c].types()[d], user_input())) {
+            if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (user_input()).toLowerCase())) {
               self.places()[c].vis(true);
             }
           }
-          if (stringFinder(places()[c].name(), user_input())) {
+          if (stringFinder((self.places()[c].name()).toLowerCase(), (user_input()).toLowerCase())) {
             self.places()[c].vis(true);
           }
 
