@@ -176,14 +176,14 @@ var ViewModel = function() {
             self.places()[c].vis(false);
           }
           for (var d in places()[c].types()){
-            if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (user_input()).toLowerCase())) {
+            if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
               self.places()[c].vis(true);
             }
           }
-          if (stringFinder((self.places()[c].name()).toLowerCase(), (user_input()).toLowerCase())) {
+          if (stringFinder((self.places()[c].name()).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
             self.places()[c].vis(true);
           }
-          if (stringFinder((self.places()[c].address()).toLowerCase(), (user_input()).toLowerCase())) {
+          if (stringFinder((self.places()[c].address()).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
             self.places()[c].vis(true);
           }
           if (places()[c].vis() && places()[c].markerId()){
