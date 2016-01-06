@@ -21,6 +21,7 @@ div{
   flex-wrap: wrap;
   width: 100%;
 }
+#phone,
 .flex2{
   display: inline-block;
 }
@@ -56,7 +57,6 @@ p{
   font-family: monospace;
   color: black;
   margin: 2%;
-
   width: 30%;
 }
 .ham_menu_head{
@@ -122,11 +122,11 @@ p{
   margin: 5px;
   font-size: 1.5em;
 }
-.h2,
+h2,
 #biz_name{
   font-size: 2em;
   padding: 10px;
-  margin: 5px;
+  margin: 2%;
 }
 img{
   margin: 5px;
@@ -152,9 +152,16 @@ h1{
   height: 25px;
   width: 15%;
   text-align: center;
-  /*font-size: 1.15em;*/
   font-style: oblique;
   -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
   -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
   box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+}
+.rev_com{
+  display:inline-block;
+  text-align: center;
+  font-size: 1.25em;
+  margin: 2%;
+  font-style: italic;
+  width: 40%;
 }
