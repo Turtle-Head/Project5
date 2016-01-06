@@ -183,7 +183,9 @@ var ViewModel = function() {
           if (stringFinder((self.places()[c].name()).toLowerCase(), (user_input()).toLowerCase())) {
             self.places()[c].vis(true);
           }
-
+          if (stringFinder((self.places()[c].address()).toLowerCase(), (user_input()).toLowerCase())) {
+            self.places()[c].vis(true);
+          }
           if (places()[c].vis() && places()[c].markerId()){
             self.places()[c].markerId().setMap(map);
           }
