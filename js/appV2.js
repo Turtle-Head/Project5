@@ -248,7 +248,7 @@ var HandleInfoWindow = function(place, content) {
       content += '<img src="' + place.locImg() + '" class="images">';
     }
     if (place.gPlace().reviews.length > 0) {
-      content += '<div class="snip">' + place.gPlace().reviews[0].text + '</div>';
+      content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div>';
     }
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
