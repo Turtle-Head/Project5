@@ -47,12 +47,8 @@
         <div class="rate">Current Filter: <span data-bind="text: user_filter"></span></div>
       </div>
       <div id="yelp" data-bind="with: currentYelp">
-        <img class="images" src=""data-bind="photo">
         <h2 id="biz_name" data-bind="text: name"></h2>
         <div class="phone" data-bind="text: address"></div>
-        <div class="images" data-bind="with: gData.photos">
-          <div class="images" data-bind="text: html_attributions"></div>
-        </div>
         <div data-bind="with: yelp">
           <div class="phone" data-bind="text: display_phone"></div>
           <div class="flex">
@@ -63,6 +59,7 @@
           </div>
           <div class="flex2">
             <div class="flex2">
+              <img class="images" src="" data-bind="forEach: $parent.photos, attr: {src: $parent.photos}">
               <img class="images" src="" alt="Google Street View" data-bind="attr: {src: $parent.locImg}">
               <img src="" data-bind="attr: {src: snippet_image_url}">
               <img src="" data-bind="attr: {src: image_url}">
@@ -71,6 +68,14 @@
             </div>
           </div>
         </div>
+        <div data-bind="with: gPlace">
+          <div class="flex2">
+            <div class="flex2">
+              <div data-bind="forEach: reviews, text: reviews.text"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     <!--Application Scripts Go Here-->

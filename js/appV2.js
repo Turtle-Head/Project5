@@ -55,14 +55,12 @@ var PlaceData = function(data){
   this.svLoc = searchString(data.address) + '+Kelowna+British+Columbia';
   this.yelp = ko.observable(0);
   this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.svLoc + ' width="350px"');
-
   this.markerId = ko.observable(0);
   this.gPlace = ko.observable(0);
-  this.gData = ko.observable(0);
   this.lat = ko.observable(0);
   this.lng = ko.observable(0);
   this.rating = ko.computed(function() {
-    return ((this.gData().rating + this.yelp().rating)/2);
+    return ((this.gPlace().rating + this.yelp().rating)/2);
   }, this);
   this.types = ko.computed(function() {
     var tp = [];
@@ -76,11 +74,14 @@ var PlaceData = function(data){
     }
     return tp;
   }, this);
-  this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
-  if(this.gData().photo){
-    this.photo = ko.computed(function() {
-      var url = this.gData().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100});
-      return url;
+
+  // Gets URLs for all photos returned by the google details call
+  if(this.gPlace().photo){
+    this.photos = ko.computed(function() {
+      var urls = [];
+      for (var i in this.gPlace().photos)
+        urls.push(this.gPlace().photos[i].getUrl({'maxWidth': 350, 'maxHeight': 100}));
+      return urls;
     }, this);
   }
   //Begin Yelp Call
@@ -125,6 +126,8 @@ var PlaceData = function(data){
   };
   $.ajax(settings);
   // End Yelp Call
+  this.contentString = ko.observable('');
+
 
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
@@ -152,7 +155,7 @@ var ViewModel = function() {
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
   $('#menu_rate').hide();
-  initializeMap();
+  MapViewModel();
 
   this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
@@ -218,6 +221,16 @@ var HandleInfoWindow = function(place, content) {
       'lat': place.lat(),
       'lng': place.lng()
     };
+    if (place.gPlace().website){
+      content += '<a href="' + place.gPlace().website + '" class="g-rate">' + place.name() + '</a><div class="g-rate">' + place.address() + '</div>';
+    } else {
+      content += '<div class="g-rate">' + place.name() + '</div><div class="g-rate">' + place.address() + '</div>';
+    }
+    if ((typeof place.gPlace().photos) !== 'undefined'){
+      content += '<img src="' + place.gPlace().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" class="images">';
+    } else {
+      content += '<img src="' + place.locImg() + '" class="images">';
+    }
     content += '<div class="g-rate">Gelp rating: ' + place.rating() + '</div>';
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
@@ -229,15 +242,11 @@ var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
     for (var i in places()){
-      if (results[0].name.toLowerCase() == places()[i].name().toLowerCase()){
-        createMapMarker(results[0], i);
-        places()[i].gPlace(results[0]);
-        places()[i].lat(results[0].geometry.location.lat());
-        places()[i].lng(results[0].geometry.location.lng());
-        places()[i].gData({
-          'photos': results[0].photos,
-          'rating': results[0].rating
-        });
+      if (results.name.toLowerCase() == places()[i].name().toLowerCase()){
+        places()[i].gPlace(results);
+        createMapMarker(results, i);
+        places()[i].lat(results.geometry.location.lat());
+        places()[i].lng(results.geometry.location.lng());
       }
     }
   }
@@ -258,11 +267,9 @@ var createMapMarker = function(obj, p) {
     icon: icn
   });
   places()[p].markerId(marker);
-  // infoWindows are the little helper windows that open when you click
-  // or hover over a pin on a map. They usually contain more information
-  // about a location.
-  // This infoWindow should have a streetview image as well as name of establishment and address
-  var contentString = places()[p].contentString() + '<img src="' + places()[p].locImg() + '">';
+  // This infoWindow should have a streetview image as well as name of establishment and address but wait, can it have more....?
+  // Look at the HandleInfoWindow function to see what it all gets
+  var contentString = '';
   infoWindow = new google.maps.InfoWindow();
 
   // Adds listener to map markers
@@ -314,7 +321,7 @@ var pinPoster = function() {
     service.textSearch(request, callback);
   }
 };
-var initializeMap = function(){
+var MapViewModel = function(){
     var mapOptions = {
       disableDefaultUI: false,
       mapTypeId: google.maps.MapTypeId.HYBRID,
@@ -327,8 +334,18 @@ var initializeMap = function(){
 
     // Sets the boundaries of the map based on pin locations
     window.mapBounds = new google.maps.LatLngBounds();
-    // pinPoster() creates pins on the map for each location
-    pinPoster();
+
+    //pinPoster();
+    var service = new google.maps.places.PlacesService(map);
+    // Iterates through the array of locations, creates a search object for each location
+    for (var p in places()) {
+      // the search request object
+      var request = {
+        placeId: places()[p].id
+      };
+      service.getDetails(request, callback);
+      //service.textSearch(request, callback);
+    }
 };
 
 // Loads map and other content
