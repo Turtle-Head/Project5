@@ -323,22 +323,7 @@ var createMapMarker = function(obj, p) {
   // center the map
   map.setCenter(bounds.getCenter());
 };
-var pinPoster = function() {
-  // creates a Google place search service object. PlacesService does the work of
-  // actually searching for location data.
-  var service = new google.maps.places.PlacesService(map);
-  // Iterates through the array of locations, creates a search object for each location
-  for (var p in places()) {
-    // the search request object
-    var request = {
-      query: places()[p].location
-    };
-    // Actually searches the Google Maps API for location data and runs the callback
-    // function with the search results after each search.
-    //service.getDetails(request, callback);
-    service.textSearch(request, callback);
-  }
-};
+
 var MapViewModel = function(){
     // {Styles SRC #005: 'https://mapbuildr.com/buildr'}
     var mapOptions = {
@@ -349,64 +334,58 @@ var MapViewModel = function(){
       zoomControl: false,
       styles: [
         {
-          "featureType":"administrative",
-          "stylers":[{"visibility":"off"}]
+          "featureType": "water",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#193341" }]
         },
         {
-          "featureType":"poi",
-          "stylers":[{"visibility":"simplified"}]
+          "featureType": "landscape",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#2c5a71" }]
         },
         {
-          "featureType":"road",
-          "elementType":"labels",
-          "stylers":[{"visibility":"simplified"}]
+          "featureType": "road",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#29768a"},{"lightness": -37 }]
         },
         {
-          "featureType":"water",
-          "stylers":[{"visibility":"simplified"}]
+          "featureType": "poi",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#406d80" }]
         },
         {
-          "featureType":"transit",
-          "stylers":[{"visibility":"simplified"}]
+          "featureType": "transit",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#406d80" }]
         },
         {
-          "featureType":"landscape",
-          "stylers":[{"visibility":"simplified"}]
+          "elementType": "labels.text.stroke",
+          "stylers": [{ "visibility": "on" },{ "color": "#3e606f" },{ "weight": 2 },{ "gamma": 0.84 }]
         },
         {
-          "featureType":"road.highway",
-          "stylers":[{"visibility":"off"}]
+          "elementType": "labels.text.fill",
+          "stylers": [{ "color": "#ffffff" }]
         },
         {
-          "featureType":"road.local",
-          "stylers":[{"visibility":"on"}]
+          "featureType": "administrative",
+          "elementType": "geometry",
+          "stylers": [{ "weight": 0.6 },{ "color": "#1a3541" }]
         },
         {
-          "featureType":"road.highway",
-          "elementType":"geometry",
-          "stylers":[{"visibility":"on"}]
+          "elementType": "labels.icon",
+          "stylers": [{ "visibility": "off" }]
         },
         {
-          "featureType":"water",
-          "stylers":[{"color":"#84afa3"},{"lightness":52}]
-        },
-        {
-          "stylers":[{"saturation":-17},{"gamma":0.36}]
-        },
-        {
-          "featureType":"transit.line",
-          "elementType":"geometry",
-          "stylers":[{"color":"#3f518c"}]
+          "featureType": "poi.park",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#2c5a71" }]
         }
       ]
     };
     map = new google.maps.Map(document.querySelector('#map'), mapOptions);
-
-
     // Sets the boundaries of the map based on pin locations
     window.mapBounds = new google.maps.LatLngBounds();
-
-    //pinPoster();
+    // Place Service for the getDetails google maps call
     var service = new google.maps.places.PlacesService(map);
     // Iterates through the array of locations, creates a search object for each location
     for (var p in places()) {
@@ -415,7 +394,6 @@ var MapViewModel = function(){
         placeId: places()[p].id
       };
       service.getDetails(request, callback);
-      //service.textSearch(request, callback);
     }
 };
 
