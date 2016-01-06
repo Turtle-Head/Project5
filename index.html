@@ -26,7 +26,7 @@
               <tr><th class="ham_menu_head">Locations</th></tr>
             </thead>
             <tbody data-bind="foreach: places">
-              <tr><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
+              <tr data-bind="if: vis"><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
             </tbody>
           </table>
           <div id="menu_rate">
@@ -47,12 +47,8 @@
         <div class="rate">Current Filter: <span data-bind="text: user_filter"></span></div>
       </div>
       <div id="yelp" data-bind="with: currentYelp">
-        <img class="images" src=""data-bind="photo">
         <h2 id="biz_name" data-bind="text: name"></h2>
         <div class="phone" data-bind="text: address"></div>
-        <div class="images" data-bind="with: gData.photos">
-          <div class="images" data-bind="text: html_attributions"></div>
-        </div>
         <div data-bind="with: yelp">
           <div class="phone" data-bind="text: display_phone"></div>
           <div class="flex">
@@ -71,6 +67,9 @@
             </div>
           </div>
         </div>
+        <!--Needs some work-->
+        
+        <!---->
       </div>
     </div>
     <!--Application Scripts Go Here-->

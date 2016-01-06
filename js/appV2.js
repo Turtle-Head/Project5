@@ -55,14 +55,12 @@ var PlaceData = function(data){
   this.svLoc = searchString(data.address) + '+Kelowna+British+Columbia';
   this.yelp = ko.observable(0);
   this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.svLoc + ' width="350px"');
-
   this.markerId = ko.observable(0);
   this.gPlace = ko.observable(0);
-  this.gData = ko.observable(0);
   this.lat = ko.observable(0);
   this.lng = ko.observable(0);
   this.rating = ko.computed(function() {
-    return ((this.gData().rating + this.yelp().rating)/2);
+    return ((this.gPlace().rating + this.yelp().rating)/2);
   }, this);
   this.types = ko.computed(function() {
     var tp = [];
@@ -76,12 +74,15 @@ var PlaceData = function(data){
     }
     return tp;
   }, this);
-  this.contentString = ko.observable('<div>' + this.name() + '</div><div class="address" id="' + this.id + '">' + this.address() + '</div>');
-  if(this.gData().photo){
-    this.photo = ko.computed(function() {
-      var url = this.gData().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100});
-      return url;
-    }, this);
+  var photos = ko.observableArray([]);
+  // Gets URLs for all photos returned by the google details call
+  if (typeof(this.gPlace().photo) !== 'undefined'){
+    for (var i in this.gPlace().photos()) {
+      photos().push(this.gPlace().photos[i].getUrl({
+        'maxWidth': 350,
+        'maxHeight': 100
+      }));
+    }
   }
   //Begin Yelp Call
   // Randomize the nonce generator randomly
@@ -125,6 +126,8 @@ var PlaceData = function(data){
   };
   $.ajax(settings);
   // End Yelp Call
+  this.contentString = ko.observable('');
+
 
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
@@ -148,33 +151,49 @@ var ViewModel = function() {
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
-  this.user_input = ko.observable(" ");
+  this.user_input = ko.observable("");
   this.currentYelp = ko.observable(this.places()[0]);
   $('#yelp').hide();
   $('#menu_rate').hide();
-  initializeMap();
+  MapViewModel();
 
   this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
-    if (places().length > 0) {
-      for (var c in places()){
-        if (user_input() in oc(places()[c].types())){
-          self.places()[c].vis(true);
-        } else if (user_input() in oc(places()[c].name())){
-          self.places()[c].vis(true);
-        } else {
-          self.places()[c].vis(false);
+    if ((user_input().length === 0) && (places().length > 0)) {
+      for (var a in places()) {
+        places()[a].vis(true);
+        if (places()[a].markerId()) {
+          places()[a].markerId().setMap(map);
         }
-        if (places()[c].vis() && places()[c].markerId()){
-          self.places()[c].markerId().setMap(map);
-        }
-        else if (!places()[c].vis() && places()[c].markerId()) {
-          self.places()[c].markerId().setMap(null);
+      }
+    } else if (places().length > 0) {
+        for (var c in places()){
+          if (user_input() in oc(places()[c].types())){
+            self.places()[c].vis(true);
+          } else if (user_input() in oc(places()[c].name())){
+            self.places()[c].vis(true);
+          } else {
+            self.places()[c].vis(false);
+          }
+          for (var d in places()[c].types()){
+            if (stringFinder(places()[c].types()[d], user_input())) {
+              self.places()[c].vis(true);
+            }
+          }
+          if (stringFinder(places()[c].name(), user_input())) {
+            self.places()[c].vis(true);
+          }
+
+          if (places()[c].vis() && places()[c].markerId()){
+            self.places()[c].markerId().setMap(map);
+          }
+          else if (!places()[c].vis() && places()[c].markerId()) {
+            self.places()[c].markerId().setMap(null);
         }
       }
     }
     this.user_filter(user_input());
-    $('#reset_filter').click(function(){user_input(" ");});
+    $('#reset_filter').click(function(){user_input("");});
     return user_filter();
   }, this);
 };
@@ -218,7 +237,19 @@ var HandleInfoWindow = function(place, content) {
       'lat': place.lat(),
       'lng': place.lng()
     };
-    content += '<div class="g-rate">Gelp rating: ' + place.rating() + '</div>';
+    if (place.gPlace().website){
+      content += '<a href="' + place.gPlace().website + '" class="g-rate">' + place.name() + '</a><div class="g-rate">' + place.address() + '</div>';
+    } else {
+      content += '<div class="g-rate">' + place.name() + '</div><div class="g-rate">' + place.address() + '</div>';
+    }
+    if ((typeof place.gPlace().photos) !== 'undefined'){
+      content += '<img src="' + place.gPlace().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" class="images">';
+    } else {
+      content += '<img src="' + place.locImg() + '" class="images">';
+    }
+    if (place.gPlace().reviews.length > 0) {
+      content += '<div class="snip">' + place.gPlace().reviews[0].text + '</div>';
+    }
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
@@ -229,15 +260,11 @@ var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     // Iterates through places to find the index before creating map markers
     for (var i in places()){
-      if (results[0].name.toLowerCase() == places()[i].name().toLowerCase()){
-        createMapMarker(results[0], i);
-        places()[i].gPlace(results[0]);
-        places()[i].lat(results[0].geometry.location.lat());
-        places()[i].lng(results[0].geometry.location.lng());
-        places()[i].gData({
-          'photos': results[0].photos,
-          'rating': results[0].rating
-        });
+      if (results.name.toLowerCase() == places()[i].name().toLowerCase()){
+        places()[i].gPlace(results);
+        createMapMarker(results, i);
+        places()[i].lat(results.geometry.location.lat());
+        places()[i].lng(results.geometry.location.lng());
       }
     }
   }
@@ -258,11 +285,9 @@ var createMapMarker = function(obj, p) {
     icon: icn
   });
   places()[p].markerId(marker);
-  // infoWindows are the little helper windows that open when you click
-  // or hover over a pin on a map. They usually contain more information
-  // about a location.
-  // This infoWindow should have a streetview image as well as name of establishment and address
-  var contentString = places()[p].contentString() + '<img src="' + places()[p].locImg() + '">';
+  // This infoWindow should have a streetview image as well as name of establishment and address but wait, can it have more....?
+  // Look at the HandleInfoWindow function to see what it all gets
+  var contentString = '';
   infoWindow = new google.maps.InfoWindow();
 
   // Adds listener to map markers
@@ -314,7 +339,7 @@ var pinPoster = function() {
     service.textSearch(request, callback);
   }
 };
-var initializeMap = function(){
+var MapViewModel = function(){
     var mapOptions = {
       disableDefaultUI: false,
       mapTypeId: google.maps.MapTypeId.HYBRID,
@@ -327,8 +352,18 @@ var initializeMap = function(){
 
     // Sets the boundaries of the map based on pin locations
     window.mapBounds = new google.maps.LatLngBounds();
-    // pinPoster() creates pins on the map for each location
-    pinPoster();
+
+    //pinPoster();
+    var service = new google.maps.places.PlacesService(map);
+    // Iterates through the array of locations, creates a search object for each location
+    for (var p in places()) {
+      // the search request object
+      var request = {
+        placeId: places()[p].id
+      };
+      service.getDetails(request, callback);
+      //service.textSearch(request, callback);
+    }
 };
 
 // Loads map and other content

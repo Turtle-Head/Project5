@@ -56,7 +56,7 @@ p{
   font-family: monospace;
   color: black;
   margin: 2%;
-  
+
   width: 30%;
 }
 .ham_menu_head{
@@ -115,6 +115,7 @@ p{
   font-style: oblique;
   font-size: 1.5em;
 }
+.snip,
 #snippet{
   padding: 10px;
   margin: 5px;
