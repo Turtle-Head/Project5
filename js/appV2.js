@@ -175,7 +175,7 @@ var ViewModel = function() {
           } else {
             self.places()[c].vis(false);
           }
-          for (var d in places()[c].types() && !places()[c].vis()){
+          for (var d in places()[c].types()){
             if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
               self.places()[c].vis(true);
             }
