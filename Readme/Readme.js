@@ -58,6 +58,9 @@ Previous project Online Resume V2
 
 #004: 'http://snook.ca/archives/javascript/testing_for_a_v'
 
+Map Styles:
+#005: 'https://mapbuildr.com/buildr'}
+
 ----------------------------------------
 Current Issues:
 
