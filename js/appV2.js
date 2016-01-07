@@ -1,6 +1,6 @@
 // Author:James Fehr
-// Date:December 29, 2015  Edit: Ongoing
-// Project 5: Neighborhood Map
+// Version: 2
+// Project 5: Neighborhood Map aka. "Gelp"
 var map;
 var pDmodel = [
   {
@@ -121,7 +121,7 @@ var PlaceData = function(data){
     },
     error: function() {
       // Do stuff on fail
-      console.log('Failed to import Data');
+      alert('Failed to import Yelp data');
     }
   };
   $.ajax(settings);
@@ -278,6 +278,9 @@ var callback = function(results, status) {
         places()[i].lng(results.geometry.location.lng());
       }
     }
+  } else {
+    alert('Failed to import Google Places data');
+    console.log(status);
   }
 };
 var createMapMarker = function(obj, p) {
