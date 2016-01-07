@@ -58,6 +58,7 @@ var PlaceData = function(data){
   this.gPlace = ko.observable(0);
   this.lat = ko.observable(0);
   this.lng = ko.observable(0);
+  this.visibility = ko.observable(false);
   this.rating = ko.computed(function() {
     return ((this.gPlace().rating + this.yelp().rating)/2);
   }, this);
@@ -130,12 +131,7 @@ var PlaceData = function(data){
 
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
-    $('#yelp').show();  // show Yelp Panel
-    $('#menu_rate').show();
-    $('#yelpTog').click(function(){
-      $('#yelp').hide();
-      $('#menu_rate').hide();
-    });
+    set_visible(); // opens panel, shows gelp rating
     google.maps.event.trigger(this.markerId(),'click');
   };
 };
@@ -152,11 +148,8 @@ var ViewModel = function() {
   console.log(self.places());
   this.user_input = ko.observable("");
   this.currentYelp = ko.observable(this.places()[0]);
-  $('#yelp').hide();
-  $('#menu_rate').hide();
   MapViewModel();
   // Filters location list for user_input
-  this.user_filter = ko.observable("");
   this.filterData = ko.computed(function(){
     // Checks user_input to determine if the user has entered any terms, additionally checks places() to determine if the array is populated yet
     // Show all markers if filter is empty
@@ -198,11 +191,22 @@ var ViewModel = function() {
         }
       }
     }
-    this.user_filter(user_input());
-    $('#reset_filter').click(function(){user_input("");});
-    return user_filter();
+    return user_input();
   }, this);
 };
+var resetFilter = function() {
+  user_input('');
+};
+
+var set_hidden = function() {
+  currentYelp().visibility(false);
+  infoWindow.close();
+};
+
+var set_visible = function() {
+  currentYelp().visibility(true);
+};
+
 // String Comparison truthy falsy return for indexOf
 // Takes in 2 strings as parameters, returns true if parameter b is found in parameter a
 var stringFinder = function(a, b) {
@@ -259,7 +263,7 @@ var HandleInfoWindow = function(place, content) {
     infoWindow.setContent(content);
     infoWindow.setPosition(position);
     infoWindow.open(map);
-    $('#menu_rate').show();
+    set_visible();
 };
 var callback = function(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -307,20 +311,11 @@ var createMapMarker = function(obj, p) {
     } else {
       marker.setAnimation(google.maps.Animation.BOUNCE);
     }
-
     self.currentYelp(places()[p]); // sets current pushed button as yelp panel info
-    $('#yelp').show();
-    $('#yelpTog').click(function(){
-      $('#yelp').hide();
-      infoWindow.close(map,marker);
-      if (marker.getAnimation() !== null){
-        marker.setAnimation(null);
-      }
-    });
+    set_visible();
   });
   google.maps.event.addListener(infoWindow,'closeclick',function(){
-   $('#yelp').hide();
-   $('#menu_rate').hide();
+    set_hidden();
   });
   // this is where the pin actually gets added to the map.
   // bounds.extend() takes in a map location object
