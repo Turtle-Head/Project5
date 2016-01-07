@@ -246,9 +246,9 @@ var HandleInfoWindow = function(place, content) {
     };
     // Checking for business url
     if (place.gPlace().website){
-      content += '<a href="' + place.gPlace().website + '" class="g-rate">' + place.name() + '</a><div class="g-rate">' + place.address() + '</div>';
+      content += '<div width="400"><a href="' + place.gPlace().website + '" class="inf-Win">' + place.name() + '</a><div class="inf-Win">' + place.address() + '</div>';
     } else {
-      content += '<div class="g-rate">' + place.name() + '</div><div class="g-rate">' + place.address() + '</div>';
+      content += '<div width="400"><div class="inf-Win">' + place.name() + '</div><div class="inf-Win">' + place.address() + '</div>';
     }
     // Checking for photos from google place service
     if ((typeof place.gPlace().photos) !== 'undefined'){
@@ -258,7 +258,9 @@ var HandleInfoWindow = function(place, content) {
     }
     // Checking for reviews from google place service
     if (place.gPlace().reviews.length > 0) {
-      content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div>';
+      content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div></div>';
+    } else{
+      content += '</div>';
     }
     infoWindow.setContent(content);
     infoWindow.setPosition(position);

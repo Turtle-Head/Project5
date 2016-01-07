@@ -86,10 +86,13 @@ p{
   border-color: orange;
   font-size: 1.5em;
 }
+.inf-Win,
 .g-rate{
   padding: 10px;
   margin: 5px;
   font-size: 2em;
+}
+.g-rate{
   text-align: center;
 }
 .phone{
