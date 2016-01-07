@@ -1,4 +1,5 @@
 /*
+Author: James Fehr
 Project Description:
 This project is Project #5 of the Front End Nano Degree program at Udacity
 
@@ -44,6 +45,7 @@ App displayed on mobile device with hamburger menu. (One possible mobile impleme
 -----------------------------------------
 
 Code Sources:
+
 Yelp Functions:
 #001: 'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'
 Several code snippets were used and experimented on to get the OAuth code to work for getting a Yelp import
@@ -57,6 +59,7 @@ Previous project Online Resume V2
 Handle infoWindow:
 #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
 
+Testing Strings as objects oc function:
 #004: 'http://snook.ca/archives/javascript/testing_for_a_v'
 
 Map Styles:

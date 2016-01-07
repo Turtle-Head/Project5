@@ -16,7 +16,7 @@
           <a href="http://maps.google.com" margin="15px"><img src="https://developers.google.com/places/documentation/images/powered-by-google-on-non-white.png" height="25px"></a>
           <a href="http://yelp.com" margin="15px"><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="25px"></a>
           <img src="" data-bind="attr: {src: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSBMsTshlI8_G6WyE70rSrDadZnEk1RoH9ilv7Ky8KnmGDoZOL-aFVsOA'}" height="25px">
-          <h1>Gelp, the Neighborhood Map Project for the Udacity: Front End Nanodegree</h1>
+          <h1>Gelp</h1>
         </div>
       </div>
       <!--Menu and Map-->
@@ -30,7 +30,7 @@
               <tr data-bind="if: vis"><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
             </tbody>
           </table>
-          <div id="menu_rate">
+          <div id="menu_rate" data-bind="visible: currentYelp().visibility">
             <div class="g-rate">Gelp Rating:
               <div class="flex2" data-bind="text: currentYelp().rating"></div>
             </div>
@@ -41,34 +41,36 @@
       <!--Close panel button, filter textInput and reset filter button-->
       <div class="flex">
         <p class="flex2">
-          <button class="button" id="yelpTog">Close</button>
+          <button class="button" id="yelpTog" data-bind="click: set_hidden">Close</button>
           <input class="textArea" width="80%" data-bind="textInput: user_input"/>
-          <button class="button" id="reset_filter">Reset Filter</button>
+          <button class="button" id="reset_filter" data-bind="click: resetFilter">Reset Filter</button>
         </p>
       </div>
-      <!--Displays content from Yelp and Google Places Service-->
-      <div id="yelp" data-bind="with: currentYelp">
-        <div class="flex">
-          <h2>Reviews:</h2>
-          <div class="rev_com" data-bind="text: gPlace().reviews[1].text"></div>
-          <div class="rev_com" data-bind="text: yelp().snippet_text"></div>
-        </div>
-        <div class="flex">
-          <a href="" data-bind="attr: {href: gPlace().website}"><h2 id="biz_name" data-bind="text: name"></h2></a>
-          <div class="phone" data-bind="text: address"></div>
-          <div class="phone" data-bind="text: yelp().display_phone"></div>
-        </div>
-        <div data-bind="with: yelp">
+      <!--Displays content from Yelp and Google Places Service, toggles visible with set_visible and hidden with set_hidden-->
+      <div data-bind="visible: currentYelp().visibility">
+        <div id="yelp" data-bind="with: currentYelp, visible: visibility">
           <div class="flex">
-            <div class="rate">Rating: </div>
-            <img class="rate" src="" alt="Rating" data-bind="attr: {src: rating_img_url}">
+            <h2>Reviews:</h2>
+            <div class="rev_com" data-bind="text: gPlace().reviews[1].text"></div>
+            <div class="rev_com" data-bind="text: yelp().snippet_text"></div>
           </div>
-          <div class="flex2">
+          <div class="flex">
+            <a href="" data-bind="attr: {href: gPlace().website}"><h2 id="biz_name" data-bind="text: name"></h2></a>
+            <div class="phone" data-bind="text: address"></div>
+            <div class="phone" data-bind="text: yelp().display_phone"></div>
+          </div>
+          <div data-bind="with: yelp">
+            <div class="flex">
+              <div class="rate">Rating: </div>
+              <img class="rate" src="" alt="Rating" data-bind="attr: {src: rating_img_url}">
+            </div>
             <div class="flex2">
-              <img class="images" src="" alt="Google Street View" data-bind="attr: {src: $parent.locImg}">
-              <img src="" data-bind="attr: {src: snippet_image_url}" height="150px">
-              <img src="" data-bind="attr: {src: image_url}" height="150px">
-              <div class="flex2" style="{text-align: center; align-content: center;}"><a href="" data-bind="attr: {href: url}">Check Yelp<br><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="50px" alt="View on Yelp"></a></div>
+              <div class="flex2">
+                <img class="images" src="" alt="Google Street View" data-bind="attr: {src: $parent.locImg}">
+                <img src="" data-bind="attr: {src: snippet_image_url}" height="150px">
+                <img src="" data-bind="attr: {src: image_url}" height="150px">
+                <div class="flex2" style="{text-align: center; align-content: center;}"><a href="" data-bind="attr: {href: url}">Check Yelp<br><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="50px" alt="View on Yelp"></a></div>
+              </div>
             </div>
           </div>
         </div>
