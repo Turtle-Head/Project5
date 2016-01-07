@@ -14,7 +14,7 @@
     <div id="content" class="flex, panel">
       <div class="head">
         <div class="flex" align="center" border="2px" background-color="blue" padding="10px">
-          <a href="http://maps.google.com" margin="15px"><img src="https://developers.google.com/places/documentation/images/powered-by-google-on-non-white.png" height="25px"></a>
+          <a href="http://maps.google.com" margin="15px"><img src="img/powered_by_google_on_non_white_hdpi.png" height="25px"></a>
           <a href="http://yelp.com" margin="15px"><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="25px"></a>
           <img src="" data-bind="attr: {src: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSBMsTshlI8_G6WyE70rSrDadZnEk1RoH9ilv7Ky8KnmGDoZOL-aFVsOA'}" height="25px">
           <h1>Gelp</h1>
@@ -49,9 +49,9 @@
       </div>
       <!--Displays content from Yelp and Google Places Service, toggles visible with set_visible and hidden with set_hidden-->
       <div data-bind="visible: currentYelp().visibility">
-        <div id="yelp" data-bind="with: currentYelp, visible: visibility">
-          <div class="flex">
-            <h2>Reviews:</h2>
+        <div id="yelp" data-bind="with: currentYelp">
+          <div data-bind="" class="flex">
+            <h2 >Reviews:</h2>
             <div class="rev_com" data-bind="text: gPlace().reviews[1].text"></div>
             <div class="rev_com" data-bind="text: yelp().snippet_text"></div>
           </div>
