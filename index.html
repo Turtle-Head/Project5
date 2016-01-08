@@ -50,7 +50,7 @@
       <!--Close panel button, filter textInput and reset filter button-->
         <div class="flex">
           <p class="flex2">
-            <button class="button" id="yelpTog" data-bind="click: set_hidden">Close</button>
+            <button class="button" id="yelpTog" data-bind="click: currentYelp().set_hidden">Close</button>
             <input class="textArea" style="width=80%" data-bind="textInput: user_input" placeholder="Filter checks types, name and address"/>
             <button class="button" id="reset_filter" data-bind="click: resetFilter">Reset Filter</button>
           </p>
