@@ -2,6 +2,8 @@
 // Version: 2
 // Project 5: Neighborhood Map aka. "Gelp"
 var map;
+var loading = ko.observable(false);
+
 var pDmodel = [
   {
     'name': 'Bohemian Cafe & Catering Company',
@@ -29,21 +31,46 @@ var pDmodel = [
     'id': 'ChIJK-KSIKb0fVMRqeg_8E-UyK0'
   }
 ];
-// Removes spaces from search terms
-var searchString = function(e) {
-  // Remove spaces replace with +
-  for (var x in e){
-    e = e.replace(' ', '+');
-    e = e.replace(', ', '+');
-    e = e.replace(',', '+');
-    e = e.replace('++', '+');
+// nonce_generate is needed for Yelp to use oAuth correctly
+var nonce_generate = function(){
+  var length = (Math.floor(Math.random() * 32)) + (Math.floor(Math.random() * 32));
+  // SRC #002{'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'}
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for(var i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
-    // Return e for use with the import data functions
-  return(e);
+  return text;
 };
+// Hides Gelp Rating and Data Panel at the bottom of the screen
+var set_hidden = function() {
+  self.currentYelp().visibility(false);
+  infoWindow.close();
+};
+// Reset filter function
+var resetFilter = function() {
+  self.user_input('');
+};
+// Shows Gelp Rating and Data Panel at the bottom of the screen
+var set_visible = function() {
+  self.currentYelp().visibility(true);
+};
+
 // Constructor for Model Data
 var PlaceData = function(data){
   var PD = this;
+  // Removes spaces from search terms
+  var searchString = function(e) {
+    // Remove spaces replace with +
+    for (var x in e){
+      e = e.replace(' ', '+');
+      e = e.replace(', ', '+');
+      e = e.replace(',', '+');
+      e = e.replace('++', '+');
+    }
+      // Return e for use with the import data functions
+    return(e);
+  };
   this.id = data.id; // Google Places ID for data lookup
   this.vis = ko.observable(true); // sets visibility
   this.name = ko.observable(data.name);
@@ -143,266 +170,234 @@ var ViewModel = function() {
   pDmodel.forEach(function(pDmItem){
     self.places.push( new PlaceData(pDmItem) );
   });
+  this.currentYelp = ko.observable(this.places()[0]);
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
+  // *******************************************************************
+  // Creates the infoWindow based on data in the model, shows the marker
+  // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
+  var infoWindow;
+  var HandleInfoWindow = function(place, content) {
+      var position = {
+        'lat': place.lat(),
+        'lng': place.lng()
+      };
+      // Checking for business url
+      if (place.gPlace().website){
+        content += '<div width="350px" class="flex"><div class="flex2"><a href="' + place.gPlace().website + '" class="inf-Win">' + place.name() + '</a><div class="inf-Win">' + place.address() + '</div>';
+      } else {
+        content += '<div width="350px" class="flex"><div class="flex2"><div class="inf-Win">' + place.name() + '</div><div class="inf-Win">' + place.address() + '</div>';
+      }
+      // Checking for photos from google place service
+      if ((typeof place.gPlace().photos) !== 'undefined'){
+        content += '<img src="' + place.gPlace().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" height="100px" class="images">';
+      } else {
+        content += '<img src="' + place.locImg() + '" height="100px" class="images">';
+      }
+      // Checking for reviews from google place service
+      if (place.gPlace().reviews.length > 0) {
+        content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div></div>';
+      } else{
+        content += '</div></div>';
+      }
+      infoWindow.setContent(content);
+      infoWindow.setPosition(position);
+      infoWindow.open(map);
+      set_visible();
+  };
+  // *******************************************************************
   this.user_input = ko.observable("");
-  this.currentYelp = ko.observable(this.places()[0]);
+  var showApp = function() {
+    if(self.places()[0]) loading(true);
+  };
+  // String Comparison truthy falsy return for indexOf
+  // Takes in 2 strings as parameters, returns true if parameter b is found in parameter a
+  var stringFinder = function(a, b) {
+    if (a.indexOf(b) >= 0) {
+      return true;
+    } else return false;
+  };
+  var MapViewModel = function(){
+    // {Styles SRC #005: 'https://mapbuildr.com/buildr'}
+    var mapOptions = {
+      disableDefaultUI: false,
+      mapTypeId: google.maps.MapTypeId.HYBRID,
+      scrollwheel: false,
+      scaleControl: false,
+      zoomControl: false,
+      styles: [
+        {
+          "featureType": "water",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#193341" }]
+        },
+        {
+          "featureType": "landscape",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#2c5a71" }]
+        },
+        {
+          "featureType": "road",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#29768a"},{"lightness": -37 }]
+        },
+        {
+          "featureType": "poi",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#406d80" }]
+        },
+        {
+          "featureType": "transit",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#406d80" }]
+        },
+        {
+          "elementType": "labels.text.stroke",
+          "stylers": [{ "visibility": "on" },{ "color": "#3e606f" },{ "weight": 2 },{ "gamma": 0.84 }]
+        },
+        {
+          "elementType": "labels.text.fill",
+          "stylers": [{ "color": "#ffffff" }]
+        },
+        {
+          "featureType": "administrative",
+          "elementType": "geometry",
+          "stylers": [{ "weight": 0.6 },{ "color": "#1a3541" }]
+        },
+        {
+          "elementType": "labels.icon",
+          "stylers": [{ "visibility": "off" }]
+        },
+        {
+          "featureType": "poi.park",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#2c5a71" }]
+        }
+      ]
+    };
+    var createMapMarker = function(obj, p) {
+      // The next lines save location data from the search result object to local variables
+      var lat = obj.geometry.location.lat();  // latitude from the place service
+      var lon = obj.geometry.location.lng();  // longitude from the place service
+      var name = obj.formatted_address;   // name of the place from the place service
+      var bounds = window.mapBounds;            // current boundaries of the map window
+      // marker is an object with additional data about the pin for a single location
+      var icn = 'img/marker3.png';
+      var marker = new google.maps.Marker({
+        map: map,
+        position: obj.geometry.location,
+        animation: google.maps.Animation.DROP,
+        title: name,
+        icon: icn
+      });
+      self.places()[p].markerId(marker);
+      // This infoWindow should have a streetview image as well as name of establishment and address but wait, can it have more....?
+      // Look at the HandleInfoWindow function to see what it all gets
+      var contentString = '';
+      infoWindow = new google.maps.InfoWindow();
+
+      // Adds listener to map markers
+      // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
+      // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
+      google.maps.event.addListener(marker, 'click', function(evt) {
+        HandleInfoWindow(self.places()[p], contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
+        if (marker.getAnimation() !== null) {
+          marker.setAnimation(null);
+        } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+        self.currentYelp(self.places()[p]); // sets current pushed button as yelp panel info
+        set_visible();
+      });
+      google.maps.event.addListener(infoWindow,'closeclick',function(){
+        set_hidden();
+      });
+      // this is where the pin actually gets added to the map.
+      // bounds.extend() takes in a map location object
+      bounds.extend(new google.maps.LatLng(lat, lon));
+      // fit the map to the new marker
+      map.fitBounds(bounds);
+      // center the map
+      map.setCenter(bounds.getCenter());
+    };
+    var callback = function(results, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        // Iterates through places to find the index before creating map markers
+        for (var i in self.places()){
+          if (results.name.toLowerCase() == self.places()[i].name().toLowerCase()){
+            // Stores results for later use
+            self.places()[i].gPlace(results);
+            createMapMarker(results, i);
+            // Creates positional data holder for ease of use
+            self.places()[i].lat(results.geometry.location.lat());
+            self.places()[i].lng(results.geometry.location.lng());
+          }
+        }
+      } else {
+        //***************************************************************************
+        // Google Places Error Handling
+        alert('Failed to import Google Places data');
+        console.log(status);
+        // End of Google Places Error Handling
+        //***************************************************************************
+      }
+    };
+
+    map = new google.maps.Map(document.querySelector('#map'), mapOptions);
+    // Sets the boundaries of the map based on pin locations
+    window.mapBounds = new google.maps.LatLngBounds();
+    // Place Service for the getDetails google maps call
+    var service = new google.maps.places.PlacesService(map);
+    // Iterates through the array of locations, creates a search object for each location
+    for (var p in self.places()) {
+      // the search request object
+      var request = {
+        placeId: self.places()[p].id
+      };
+      service.getDetails(request, callback);
+    }
+  };
   MapViewModel();
   // Filters location list for user_input
   this.filterData = ko.computed(function(){
     // Checks user_input to determine if the user has entered any terms, additionally checks places() to determine if the array is populated yet
     // Show all markers if filter is empty
-    if ((user_input().length === 0) && (places().length > 0)) {
-      for (var a in places()) {
-        places()[a].vis(true);
-        if (places()[a].markerId()) {
-          places()[a].markerId().setMap(map);
+    if ((self.user_input().length === 0) && (self.places().length > 0)) {
+      for (var a in self.places()) {
+        self.places()[a].vis(true);
+        if (self.places()[a].markerId()) {
+          self.places()[a].markerId().setMap(map);
         }
       }
-    } else if (places().length > 0) {
-        for (var c in places()){
-          // Quick search for any input matches, toggles marker visible if found and not visible if not found
-          if (user_input() in oc(places()[c].types())){
-            self.places()[c].vis(true);
-          } else if (user_input() in oc(places()[c].name())){
-            self.places()[c].vis(true);
-          } else {
-            self.places()[c].vis(false);
-          }
+    } else if (self.places().length > 0) {
+        for (var c in self.places()){
+          self.places()[c].vis(false);
           // Sort through the remaining non-visible markers to find additinoal matches and toggle them visible
-          for (var d in places()[c].types()){
-            if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
+          for (var d in self.places()[c].types()){
+            if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis()) {
               self.places()[c].vis(true);
             }
           }
-          if (stringFinder((self.places()[c].name()).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
+          if (stringFinder((self.places()[c].name()).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis()) {
             self.places()[c].vis(true);
           }
-          if (stringFinder((self.places()[c].address()).toLowerCase(), (user_input()).toLowerCase()) && !places()[c].vis()) {
+          if (stringFinder((self.places()[c].address()).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis()) {
             self.places()[c].vis(true);
           }
           // Shows markers if toggled visible
-          if (places()[c].vis() && places()[c].markerId()){
+          if (self.places()[c].vis() && self.places()[c].markerId()){
             self.places()[c].markerId().setMap(map);
           } //Hides markers if toggled not visible
-          else if (!places()[c].vis() && places()[c].markerId()) {
+          else if (!self.places()[c].vis() && self.places()[c].markerId()) {
             self.places()[c].markerId().setMap(null);
         }
       }
     }
-    return user_input();
+    return self.user_input();
   }, this);
-};
-var resetFilter = function() {
-  user_input('');
+  showApp();
 };
 
-var set_hidden = function() {
-  currentYelp().visibility(false);
-  infoWindow.close();
-};
-
-var set_visible = function() {
-  currentYelp().visibility(true);
-};
-
-// String Comparison truthy falsy return for indexOf
-// Takes in 2 strings as parameters, returns true if parameter b is found in parameter a
-var stringFinder = function(a, b) {
-  if (a.indexOf(b) >= 0) {
-    return true;
-  } else return false;
-};
-// nonce_generate is needed for Yelp to use oAuth correctly
-var nonce_generate = function(){
-  var length = (Math.floor(Math.random() * 32)) + (Math.floor(Math.random() * 32));
-  // SRC #002{'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'}
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for(var i = 0; i < length; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
-// Converts an array into an Object for string comparison
-// How to use: if( name in oc(['bobby', 'sue','smith']) ) { ... }
-// {SRC #004: 'http://snook.ca/archives/javascript/testing_for_a_v'}
-var oc = function(a) {
-  var o = {};
-  for(var i=0;i<a.length;i++) {
-    o[a[i]]='';
-  }
-  return o;
-};
-// Map stuff
-// {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
-var infoWindow;
-// Creates the infoWindow based on data in the model, shows the marker
-var HandleInfoWindow = function(place, content) {
-    var position = {
-      'lat': place.lat(),
-      'lng': place.lng()
-    };
-    // Checking for business url
-    if (place.gPlace().website){
-      content += '<div width="400"><a href="' + place.gPlace().website + '" class="inf-Win">' + place.name() + '</a><div class="inf-Win">' + place.address() + '</div>';
-    } else {
-      content += '<div width="400"><div class="inf-Win">' + place.name() + '</div><div class="inf-Win">' + place.address() + '</div>';
-    }
-    // Checking for photos from google place service
-    if ((typeof place.gPlace().photos) !== 'undefined'){
-      content += '<img src="' + place.gPlace().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" class="images">';
-    } else {
-      content += '<img src="' + place.locImg() + '" class="images">';
-    }
-    // Checking for reviews from google place service
-    if (place.gPlace().reviews.length > 0) {
-      content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div></div>';
-    } else{
-      content += '</div>';
-    }
-    infoWindow.setContent(content);
-    infoWindow.setPosition(position);
-    infoWindow.open(map);
-    set_visible();
-};
-var callback = function(results, status) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    // Iterates through places to find the index before creating map markers
-    for (var i in places()){
-      if (results.name.toLowerCase() == places()[i].name().toLowerCase()){
-        // Stores results for later use
-        places()[i].gPlace(results);
-        createMapMarker(results, i);
-        // Creates positional data holder for ease of use
-        places()[i].lat(results.geometry.location.lat());
-        places()[i].lng(results.geometry.location.lng());
-      }
-    }
-  } else {
-    alert('Failed to import Google Places data');
-    console.log(status);
-  }
-};
-var createMapMarker = function(obj, p) {
-  // The next lines save location data from the search result object to local variables
-  var lat = obj.geometry.location.lat();  // latitude from the place service
-  var lon = obj.geometry.location.lng();  // longitude from the place service
-  var name = obj.formatted_address;   // name of the place from the place service
-  var bounds = window.mapBounds;            // current boundaries of the map window
-  // marker is an object with additional data about the pin for a single location
-  var icn = 'img/marker3.png';
-  var marker = new google.maps.Marker({
-    map: map,
-    position: obj.geometry.location,
-    animation: google.maps.Animation.DROP,
-    title: name,
-    icon: icn
-  });
-  places()[p].markerId(marker);
-  // This infoWindow should have a streetview image as well as name of establishment and address but wait, can it have more....?
-  // Look at the HandleInfoWindow function to see what it all gets
-  var contentString = '';
-  infoWindow = new google.maps.InfoWindow();
-
-  // Adds listener to map markers
-  // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
-  // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
-  google.maps.event.addListener(marker, 'click', function(evt) {
-    HandleInfoWindow(places()[p], contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
-    if (marker.getAnimation() !== null) {
-      marker.setAnimation(null);
-    } else {
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-    }
-    self.currentYelp(places()[p]); // sets current pushed button as yelp panel info
-    set_visible();
-  });
-  google.maps.event.addListener(infoWindow,'closeclick',function(){
-    set_hidden();
-  });
-  // this is where the pin actually gets added to the map.
-  // bounds.extend() takes in a map location object
-  bounds.extend(new google.maps.LatLng(lat, lon));
-  // fit the map to the new marker
-  map.fitBounds(bounds);
-  // center the map
-  map.setCenter(bounds.getCenter());
-};
-
-var MapViewModel = function(){
-  // {Styles SRC #005: 'https://mapbuildr.com/buildr'}
-  var mapOptions = {
-    disableDefaultUI: false,
-    mapTypeId: google.maps.MapTypeId.HYBRID,
-    scrollwheel: false,
-    scaleControl: false,
-    zoomControl: false,
-    styles: [
-      {
-        "featureType": "water",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#193341" }]
-      },
-      {
-        "featureType": "landscape",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#2c5a71" }]
-      },
-      {
-        "featureType": "road",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#29768a"},{"lightness": -37 }]
-      },
-      {
-        "featureType": "poi",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#406d80" }]
-      },
-      {
-        "featureType": "transit",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#406d80" }]
-      },
-      {
-        "elementType": "labels.text.stroke",
-        "stylers": [{ "visibility": "on" },{ "color": "#3e606f" },{ "weight": 2 },{ "gamma": 0.84 }]
-      },
-      {
-        "elementType": "labels.text.fill",
-        "stylers": [{ "color": "#ffffff" }]
-      },
-      {
-        "featureType": "administrative",
-        "elementType": "geometry",
-        "stylers": [{ "weight": 0.6 },{ "color": "#1a3541" }]
-      },
-      {
-        "elementType": "labels.icon",
-        "stylers": [{ "visibility": "off" }]
-      },
-      {
-        "featureType": "poi.park",
-        "elementType": "geometry",
-        "stylers": [{ "color": "#2c5a71" }]
-      }
-    ]
-  };
-  map = new google.maps.Map(document.querySelector('#map'), mapOptions);
-  // Sets the boundaries of the map based on pin locations
-  window.mapBounds = new google.maps.LatLngBounds();
-  // Place Service for the getDetails google maps call
-  var service = new google.maps.places.PlacesService(map);
-  // Iterates through the array of locations, creates a search object for each location
-  for (var p in places()) {
-    // the search request object
-    var request = {
-      placeId: places()[p].id
-    };
-    service.getDetails(request, callback);
-  }
-};
-
-// Loads map and other content
-ko.applyBindings(ViewModel());
+// Apply the bindings and make it stick
+// ko.applyBindings(ViewModel());
