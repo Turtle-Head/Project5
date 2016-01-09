@@ -51,7 +51,7 @@
         <div class="flex">
           <p class="flex2">
             <button class="button" id="yelpTog" data-bind="click: set_hidden">Close</button>
-            <input class="textArea" style="width=80%" data-bind="textInput: user_input" placeholder="Filter checks types, name and address"/>
+            <input class="textArea" width="80%" data-bind="textInput: user_input" placeholder="Filter checks types, name and address"/>
             <button class="button" id="reset_filter" data-bind="click: resetFilter">Reset Filter</button>
           </p>
         </div>
@@ -60,7 +60,7 @@
           <div id="yelp" data-bind="with: currentYelp">
             <div data-bind="" class="flex">
               <h2 >Reviews:</h2>
-              <div class="rev_com" data-bind="if: (typeof(gPlace)=="function"), foreach: gPlace().reviews, text: text"></div>
+              <div class="rev_com" data-bind="text: gPlace().reviews[1].text"></div>
               <div class="rev_com" data-bind="text: yelp().snippet_text"></div>
             </div>
             <div class="flex">
