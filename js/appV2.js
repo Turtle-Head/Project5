@@ -44,13 +44,16 @@ var nonce_generate = function(){
 };
 // Hides Gelp Rating and Data Panel at the bottom of the screen
 var set_hidden = function() {
-  currentYelp().visibility(false);
+  self.currentYelp().visibility(false);
   infoWindow.close();
 };
-
+// Reset filter function
+var resetFilter = function() {
+  self.user_input('');
+};
 // Shows Gelp Rating and Data Panel at the bottom of the screen
 var set_visible = function() {
-  currentYelp().visibility(true);
+  self.currentYelp().visibility(true);
 };
 
 // Constructor for Model Data
@@ -108,13 +111,6 @@ var PlaceData = function(data){
       }));
     }
   }
-  this.set_Hidden = function() {
-    this.visibility(false);
-    infoWindow.close();
-  };
-  this.set_visible = function() {
-    this.visibility(true);
-  };
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -162,7 +158,7 @@ var PlaceData = function(data){
 
   this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
-    self.currentYelp().set_visible(); // opens panel, shows gelp rating
+    set_visible(); // opens panel, shows gelp rating
     google.maps.event.trigger(this.markerId(),'click');
   };
 };
@@ -171,11 +167,10 @@ var ViewModel = function() {
   var self = this;
   // Creates an array of places for use in the app with knockout bindings
   this.places = ko.observableArray([]);
-  this.currentYelp = ko.observable();
   pDmodel.forEach(function(pDmItem){
     self.places.push( new PlaceData(pDmItem) );
   });
-  this.currentYelp(this.places()[0]);
+  this.currentYelp = ko.observable(this.places()[0]);
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
@@ -209,16 +204,12 @@ var ViewModel = function() {
       infoWindow.setContent(content);
       infoWindow.setPosition(position);
       infoWindow.open(map);
-      self.currentYelp().set_visible();
+      set_visible();
   };
   // *******************************************************************
   this.user_input = ko.observable("");
   var showApp = function() {
     if(self.places()[0]) loading(true);
-  };
-  // Reset filter function
-  this.resetFilter = function() {
-    self.user_input('');
   };
   // String Comparison truthy falsy return for indexOf
   // Takes in 2 strings as parameters, returns true if parameter b is found in parameter a
@@ -317,10 +308,10 @@ var ViewModel = function() {
           marker.setAnimation(google.maps.Animation.BOUNCE);
         }
         self.currentYelp(self.places()[p]); // sets current pushed button as yelp panel info
-        self.currentYelp().set_visible();
+        set_visible();
       });
       google.maps.event.addListener(infoWindow,'closeclick',function(){
-        self.currentYelp().set_hidden();
+        set_hidden();
       });
       // this is where the pin actually gets added to the map.
       // bounds.extend() takes in a map location object
