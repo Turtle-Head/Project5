@@ -56,10 +56,14 @@
       <!--Displays content from Yelp and Google Places Service, toggles visible with set_visible and hidden with set_hidden-->
         <div data-bind="visible: panelView().visibility">
           <div id="yelp" data-bind="with: panelView">
-            <div data-bind="" class="flex">
+            <div class="flex">
               <h2 >Reviews:</h2>
-              <div class="rev_com" data-bind="if: (typeof(gPlace)=="function"), foreach: gPlace().reviews, text: text"></div>
-              <div class="rev_com" data-bind="text: yelp().snippet_text"></div>
+              <li class="rev_com" data-bind="foreach: gReview">
+                <ul data-bind="text: text"></ul>
+              </li>
+              <li>
+                <ul class="rev_com" data-bind="text: yelp().snippet_text"></ul>
+              </li>
             </div>
             <div class="flex">
               <a href="" data-bind="attr: {href: gPlace().website}"><h2 id="biz_name" data-bind="text: name"></h2></a>
