@@ -137,12 +137,12 @@ h1{
   box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
 }
 .rev_com{
-  display: block;
-  text-align: justify;
+  display:inline-block;
+  text-align: center;
   font-size: 1.25em;
   margin: 2%;
   font-style: italic;
-  width: 80%;
+  width: 40%;
 }
 tr {
     cursor: pointer;

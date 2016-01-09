@@ -76,9 +76,6 @@ var PlaceData = function(data){
   this.rating = ko.computed(function() {
     return ((this.gPlace().rating + this.yelp().rating)/2);
   }, this);
-  this.gReview = ko.computed(function() {
-    return (this.gPlace().reviews);
-  }, this);
   this.types = ko.computed(function() {
     var tp = [];
     for (var i in this.gPlace().types){
@@ -151,8 +148,8 @@ var PlaceData = function(data){
 
 
   var setYelp = function(clickedPlace){
-    //self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
-    PD.visibility(true); // opens panel, shows gelp rating
+    self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
+    clickedPlace.visibility(true); // opens panel, shows gelp rating
     google.maps.event.trigger(this.markerId(),'click');
   };
 };
