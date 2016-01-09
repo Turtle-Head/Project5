@@ -3,83 +3,74 @@
 <html lang="en" data-framework="knockoutjs">
   <head>
     <meta charset="utf-8">
-    <meta name="author" content="James Fehr">
+    <!--Author:James Fehr-->
     <title>Gelp-Bernard Avenue, Kelowna, BC</title>
     <link rel="stylesheet" href="css/style.min.css">
   </head>
   <body>
     <!--CDN Scripts for Application functionality-->
-    <script>function googleSuccess() {ko.applyBindings(new ViewModel());}
-      function Error() {alert('Failed to load resources');}
-    </script>
-    <script async type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places&callback=googleSuccess" onerror="Error()"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
-    <script async src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places"></script>
     <!--Content Goes Here-->
-
-    <div id="content" class="flex, panel"  data-bind="if: loading">
+    <div id="content" class="flex, panel">
       <div class="head">
-        <div class="flex" style="align=center; border=2px; background-color=blue; padding=10px;">
+        <div class="flex" align="center" border="2px" background-color="blue" padding="10px">
           <a href="http://maps.google.com" margin="15px"><img src="img/powered_by_google_on_non_white_hdpi.png" height="25px"></a>
           <a href="http://yelp.com" margin="15px"><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="25px"></a>
           <img src="" data-bind="attr: {src: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSBMsTshlI8_G6WyE70rSrDadZnEk1RoH9ilv7Ky8KnmGDoZOL-aFVsOA'}" height="25px">
           <h1>Gelp</h1>
         </div>
       </div>
-      <div>
       <!--Menu and Map-->
-        <div class="flex">
-          <div class="menu_elem">
-            <table>
-              <thead>
-                <tr width="100%"><th class="ham_menu_head">Locations</th></tr>
-              </thead>
-              <tbody data-bind="foreach: places">
-                <tr data-bind="if: vis"><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
-              </tbody>
-            </table>
-            <div id="menu_rate" data-bind="visible: currentYelp().visibility">
-              <div class="g-rate">Gelp Rating:
-                <div class="flex2" data-bind="text: currentYelp().rating"></div>
-              </div>
+      <div class="flex">
+        <div class="menu_elem">
+          <table>
+            <thead>
+              <tr width="100%"><th class="ham_menu_head">Locations</th></tr>
+            </thead>
+            <tbody data-bind="foreach: places">
+              <tr data-bind="if: vis"><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
+            </tbody>
+          </table>
+          <div id="menu_rate" data-bind="visible: currentYelp().visibility">
+            <div class="g-rate">Gelp Rating:
+              <div class="flex2" data-bind="text: currentYelp().rating"></div>
             </div>
           </div>
-          <div id="map" class="map"></div>
         </div>
+        <div id="map" class="map"></div>
+      </div>
       <!--Close panel button, filter textInput and reset filter button-->
-        <div class="flex">
-          <p class="flex2">
-            <button class="button" id="yelpTog" data-bind="click: set_hidden">Close</button>
-            <input class="textArea" width="80%" data-bind="textInput: user_input" placeholder="Filter checks types, name and address"/>
-            <button class="button" id="reset_filter" data-bind="click: resetFilter">Reset Filter</button>
-          </p>
-        </div>
+      <div class="flex">
+        <p class="flex2">
+          <button class="button" id="yelpTog" data-bind="click: set_hidden">Close</button>
+          <input class="textArea" width="80%" data-bind="textInput: user_input"/>
+          <button class="button" id="reset_filter" data-bind="click: resetFilter">Reset Filter</button>
+        </p>
+      </div>
       <!--Displays content from Yelp and Google Places Service, toggles visible with set_visible and hidden with set_hidden-->
-        <div data-bind="visible: currentYelp().visibility">
-          <div id="yelp" data-bind="with: currentYelp">
-            <div data-bind="" class="flex">
-              <h2 >Reviews:</h2>
-              <div class="rev_com" data-bind="text: gPlace().reviews[1].text"></div>
-              <div class="rev_com" data-bind="text: yelp().snippet_text"></div>
-            </div>
+      <div data-bind="visible: currentYelp().visibility">
+        <div id="yelp" data-bind="with: currentYelp">
+          <div data-bind="" class="flex">
+            <h2 >Reviews:</h2>
+            <div class="rev_com" data-bind="text: gPlace().reviews[1].text"></div>
+            <div class="rev_com" data-bind="text: yelp().snippet_text"></div>
+          </div>
+          <div class="flex">
+            <a href="" data-bind="attr: {href: gPlace().website}"><h2 id="biz_name" data-bind="text: name"></h2></a>
+            <div class="phone" data-bind="text: address"></div>
+            <div class="phone" data-bind="text: yelp().display_phone"></div>
+          </div>
+          <div data-bind="with: yelp">
             <div class="flex">
-              <a href="" data-bind="attr: {href: gPlace().website}"><h2 id="biz_name" data-bind="text: name"></h2></a>
-              <div class="phone" data-bind="text: address"></div>
-              <div class="phone" data-bind="text: yelp().display_phone"></div>
+              <div class="rate">Rating: </div>
+              <img class="rate" src="" alt="Rating" data-bind="attr: {src: rating_img_url}">
             </div>
-            <div data-bind="with: yelp">
-              <div class="flex">
-                <div class="rate">Rating: </div>
-                <img class="rate" src="" alt="Rating" data-bind="attr: {src: rating_img_url}">
-              </div>
+            <div class="flex2">
               <div class="flex2">
-                <div class="flex2">
-                  <img class="images" src="" alt="Google Street View" data-bind="attr: {src: $parent.locImg}">
-                  <img src="" data-bind="attr: {src: snippet_image_url}" height="150px">
-                  <img src="" data-bind="attr: {src: image_url}" height="150px">
-                  <div class="flex2" style="{text-align: center; align-content: center;}"><a href="" data-bind="attr: {href: url}">Check Yelp<br><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="50px" alt="View on Yelp"></a></div>
-                </div>
+                <img class="images" src="" alt="Google Street View" data-bind="attr: {src: $parent.locImg}">
+                <img src="" data-bind="attr: {src: snippet_image_url}" height="150px">
+                <img src="" data-bind="attr: {src: image_url}" height="150px">
+                <div class="flex2" style="{text-align: center; align-content: center;}"><a href="" data-bind="attr: {href: url}">Check Yelp<br><img src="https://s3-media3.fl.yelpcdn.com/assets/srv0/developer_pages/bce1cedefd37/assets/img/yelp_powered_btn_dark@2x.png" height="50px" alt="View on Yelp"></a></div>
               </div>
             </div>
           </div>
@@ -87,10 +78,12 @@
       </div>
     </div>
     <!--Application Scripts Go Here-->
-
-    <script async src="js/lib/oauth-signature.min.js"></script>
-    <script async src="js/keys.min.js"></script>
-    <script async src="js/appV2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="js/lib/oauth-signature.min.js"></script>
+    <script src="js/keys.min.js"></script>
+    <script src="js/appV2.min.js"></script>
     <!---->
   </body>
 </html>

@@ -2,59 +2,6 @@
 Author: James Fehr
 Project Description:
 This project is Project #5 of the Front End Nano Degree program at Udacity
---------------------------------------------------------------------------
-Usage Instructions:
-```````````````````
-Online usage> load: http://turtle-head.github.io/Project5/ in your favorite browser
-Offline usage> load: index.html  in your favorite browser
-
-Filtering:
-``````````
-The Text input area filters based on three data values.  Name of location, type of location, and address.  It is accurate according to the values in the
-places()[x].address, places()[x].types and places()[x].name variables and I have conveniently set a console.log of the places array for your consideration
-and verification of accuracy in the console for you.
-
-
-
-----------------------------------------
-Code Sources:
-
-Yelp Functions:
-#001: 'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'
-Several code snippets were used and experimented on to get the OAuth code to work for getting a Yelp import
-
-#002: 'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'
-This paired well with snippets from source #001 to create a funtionaly working nonce generator for the OAuth sequence
-
-Map Functions:
-Previous project Online Resume V2
-
-Handle infoWindow:
-#003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
-
-Testing Strings as objects oc function:
-#004: 'http://snook.ca/archives/javascript/testing_for_a_v'
-
-Map Styles:
-#005: 'https://mapbuildr.com/buildr'}
-
-----------------------------------------
-Current Issues:
-Error message:
-
-Uncaught TypeError: Unable to process binding "if: function (){return loading }"
-Message: Unable to process binding "with: function (){return currentYelp }"
-Message: Unable to process binding "text: function (){return gPlace().reviews[1].text }"
-Message: Cannot read property '1' of undefined
-
-Probable Cause:
-
-Attempting to bind things that haven't been declared yet.
-
-Status:
-Jan 7, 2016 10:46pm: Under investigation
-
-
 
 Instructor Notes:
 ----------------------------------------
@@ -96,22 +43,29 @@ List view item selected and highlighted. Associated map marker bounced and info 
 Filtered items displayed on map and in list view. Map marker selected.
 App displayed on mobile device with hamburger menu. (One possible mobile implementation.)
 -----------------------------------------
+
+Code Sources:
+
+Yelp Functions:
+#001: 'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'
+Several code snippets were used and experimented on to get the OAuth code to work for getting a Yelp import
+
+#002: 'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'
+This paired well with snippets from source #001 to create a funtionaly working nonce generator for the OAuth sequence
+
+Map Functions:
+Previous project Online Resume V2
+
+Handle infoWindow:
+#003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
+
+Testing Strings as objects oc function:
+#004: 'http://snook.ca/archives/javascript/testing_for_a_v'
+
+Map Styles:
+#005: 'https://mapbuildr.com/buildr'}
+
+----------------------------------------
+Current Issues:
+
 */
-//*********************************
-// Depreciated // Reason? Redundant and ineffective, why waste the resources loading this to have it fail time and time again? Lets not do this it is really really bad
-// It is so bad in fact that the secondary function created to check for matches finds them in half the time and does twice the leg work more accurately.
-//*********************************
-// Converts an array into an Object for string comparison
-// How to use: if( name in oc(['bobby', 'sue','smith']) ) { ... }
-// {SRC #004: 'http://snook.ca/archives/javascript/testing_for_a_v'}
-/*var oc = function(a) {
-  var o = {};
-  for(var i=0;i<a.length;i++) {
-    o[a[i]]='';
-  }
-  return o;
-};*/
-//**********************************
-// End of Depreciated !!! DO NOT REUSE short of having nothing better to do than match items in a JSON array to the other JSON array,
-// and even then write something better and more useful!!! End OF!
-//**********************************
