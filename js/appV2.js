@@ -42,6 +42,16 @@ var nonce_generate = function(){
   }
   return text;
 };
+// Hides Gelp Rating and Data Panel at the bottom of the screen
+var set_hidden = function() {
+  currentYelp().visibility(false);
+  infoWindow.close();
+};
+
+// Shows Gelp Rating and Data Panel at the bottom of the screen
+var set_visible = function() {
+  currentYelp().visibility(true);
+};
 
 // Constructor for Model Data
 var PlaceData = function(data){
@@ -88,9 +98,6 @@ var PlaceData = function(data){
     }
     return tp;
   }, this);
-  var setVis = function() {
-    this.visibility(!this.visibility());
-  };
   var photos = ko.observableArray([]);
   // Gets URLs for all photos returned by the google details call
   if (typeof(this.gPlace().photo) !== 'undefined'){
@@ -101,7 +108,13 @@ var PlaceData = function(data){
       }));
     }
   }
-
+  this.set_Hidden = function() {
+    this.visibility(false);
+    infoWindow.close();
+  };
+  this.set_visible = function() {
+    this.visibility(true);
+  };
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -147,9 +160,9 @@ var PlaceData = function(data){
   this.contentString = ko.observable('');
 
 
-  var setYelp = function(clickedPlace){
+  this.setYelp = function(clickedPlace){
     self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
-    clickedPlace.visibility(true); // opens panel, shows gelp rating
+    self.currentYelp().set_visible(); // opens panel, shows gelp rating
     google.maps.event.trigger(this.markerId(),'click');
   };
 };
@@ -163,17 +176,6 @@ var ViewModel = function() {
     self.places.push( new PlaceData(pDmItem) );
   });
   this.currentYelp(this.places()[0]);
-  this.panelView = ko.computed(function(){
-    if (typeof(places)=="function"){
-      for (var x = 0; x < places().length; x++){
-        if (places()[x].visibility()){
-          self.currentYelp(places()[x]);
-          self.currentYelp().visibility(true);
-        }
-      }
-    }
-    return self.currentYelp();
-  }, this);
   // Show Data Model in console for dev purposes
   console.log('Places Model:');
   console.log(self.places());
@@ -181,7 +183,7 @@ var ViewModel = function() {
   // Creates the infoWindow based on data in the model, shows the marker
   // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
   var infoWindow;
-  var HandleInfoWindow = function(place, content, index) {
+  var HandleInfoWindow = function(place, content) {
       var position = {
         'lat': place.lat(),
         'lng': place.lng()
@@ -207,8 +209,7 @@ var ViewModel = function() {
       infoWindow.setContent(content);
       infoWindow.setPosition(position);
       infoWindow.open(map);
-      console.log(place);
-      self.places()[index].visibility(true);
+      self.currentYelp().set_visible();
   };
   // *******************************************************************
   this.user_input = ko.observable("");
@@ -225,76 +226,6 @@ var ViewModel = function() {
     if (a.indexOf(b) >= 0) {
       return true;
     } else return false;
-  };
-
-  var createMapMarker = function(obj, p) {
-    // The next lines save location data from the search result object to local variables
-    var lat = obj.geometry.location.lat();  // latitude from the place service
-    var lon = obj.geometry.location.lng();  // longitude from the place service
-    var name = obj.formatted_address;   // name of the place from the place service
-    var bounds = window.mapBounds;            // current boundaries of the map window
-    // marker is an object with additional data about the pin for a single location
-    var icn = 'img/marker3.png';
-    var marker = new google.maps.Marker({
-      map: map,
-      position: obj.geometry.location,
-      animation: google.maps.Animation.DROP,
-      title: name,
-      icon: icn
-    });
-    self.places()[p].markerId(marker);
-    // This infoWindow should have a streetview image as well as name of establishment and address but wait, can it have more....?
-    // Look at the HandleInfoWindow function to see what it all gets
-    var contentString = '';
-    infoWindow = new google.maps.InfoWindow();
-
-    // Adds listener to map markers
-    // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
-    // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
-    google.maps.event.addListener(marker, 'click', function(evt) {
-      HandleInfoWindow(self.places()[p], contentString, p); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
-      if (marker.getAnimation() !== null) {
-        marker.setAnimation(null);
-      } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-      }
-      self.currentYelp(self.places()[p]); // sets current pushed button as yelp panel info
-      self.places()[p].visibility(true);
-    });
-    google.maps.event.addListener(infoWindow,'closeclick',function(){
-      for (var i = 0; i < self.places().length; i++) {
-        self.places()[i].visibility(false);
-      }
-    });
-    // this is where the pin actually gets added to the map.
-    // bounds.extend() takes in a map location object
-    bounds.extend(new google.maps.LatLng(lat, lon));
-    // fit the map to the new marker
-    map.fitBounds(bounds);
-    // center the map
-    map.setCenter(bounds.getCenter());
-  };
-  var callback = function(results, status) {
-    if (status == google.maps.places.PlacesServiceStatus.OK) {
-      // Iterates through places to find the index before creating map markers
-      for (var i in self.places()){
-        if (results.name.toLowerCase() == self.places()[i].name().toLowerCase()){
-          // Stores results for later use
-          self.places()[i].gPlace(results);
-          createMapMarker(results, i);
-          // Creates positional data holder for ease of use
-          self.places()[i].lat(results.geometry.location.lat());
-          self.places()[i].lng(results.geometry.location.lng());
-        }
-      }
-    } else {
-      //***************************************************************************
-      // Google Places Error Handling
-      alert('Failed to import Google Places data');
-      console.log(status);
-      // End of Google Places Error Handling
-      //***************************************************************************
-    }
   };
   var MapViewModel = function(){
     // {Styles SRC #005: 'https://mapbuildr.com/buildr'}
@@ -354,7 +285,73 @@ var ViewModel = function() {
         }
       ]
     };
+    var createMapMarker = function(obj, p) {
+      // The next lines save location data from the search result object to local variables
+      var lat = obj.geometry.location.lat();  // latitude from the place service
+      var lon = obj.geometry.location.lng();  // longitude from the place service
+      var name = obj.formatted_address;   // name of the place from the place service
+      var bounds = window.mapBounds;            // current boundaries of the map window
+      // marker is an object with additional data about the pin for a single location
+      var icn = 'img/marker3.png';
+      var marker = new google.maps.Marker({
+        map: map,
+        position: obj.geometry.location,
+        animation: google.maps.Animation.DROP,
+        title: name,
+        icon: icn
+      });
+      self.places()[p].markerId(marker);
+      // This infoWindow should have a streetview image as well as name of establishment and address but wait, can it have more....?
+      // Look at the HandleInfoWindow function to see what it all gets
+      var contentString = '';
+      infoWindow = new google.maps.InfoWindow();
 
+      // Adds listener to map markers
+      // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
+      // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
+      google.maps.event.addListener(marker, 'click', function(evt) {
+        HandleInfoWindow(self.places()[p], contentString); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
+        if (marker.getAnimation() !== null) {
+          marker.setAnimation(null);
+        } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+        self.currentYelp(self.places()[p]); // sets current pushed button as yelp panel info
+        self.currentYelp().set_visible();
+      });
+      google.maps.event.addListener(infoWindow,'closeclick',function(){
+        self.currentYelp().set_hidden();
+      });
+      // this is where the pin actually gets added to the map.
+      // bounds.extend() takes in a map location object
+      bounds.extend(new google.maps.LatLng(lat, lon));
+      // fit the map to the new marker
+      map.fitBounds(bounds);
+      // center the map
+      map.setCenter(bounds.getCenter());
+    };
+    var callback = function(results, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        // Iterates through places to find the index before creating map markers
+        for (var i in self.places()){
+          if (results.name.toLowerCase() == self.places()[i].name().toLowerCase()){
+            // Stores results for later use
+            self.places()[i].gPlace(results);
+            createMapMarker(results, i);
+            // Creates positional data holder for ease of use
+            self.places()[i].lat(results.geometry.location.lat());
+            self.places()[i].lng(results.geometry.location.lng());
+          }
+        }
+      } else {
+        //***************************************************************************
+        // Google Places Error Handling
+        alert('Failed to import Google Places data');
+        console.log(status);
+        // End of Google Places Error Handling
+        //***************************************************************************
+      }
+    };
 
     map = new google.maps.Map(document.querySelector('#map'), mapOptions);
     // Sets the boundaries of the map based on pin locations
