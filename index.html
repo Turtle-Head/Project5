@@ -13,8 +13,6 @@
       function Error() {alert('Failed to load resources');}
     </script>
     <script async type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places&callback=googleSuccess" onerror="Error()"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
     <script async src="https://code.jquery.com/jquery-2.1.4.js"></script>
     <!--Content Goes Here-->
 
@@ -36,12 +34,12 @@
                 <tr width="100%"><th class="ham_menu_head">Locations</th></tr>
               </thead>
               <tbody data-bind="foreach: places">
-                <tr data-bind="if: vis"><td class="hamburger_menu" data-bind="text: name, click: $data.setYelp"></td></tr>
+                <tr data-bind="if: vis"><td class="hamburger_menu" data-bind="text: name, click: $data.setVis"></td></tr>
               </tbody>
             </table>
-            <div id="menu_rate" data-bind="visible: currentYelp().visibility">
+            <div id="menu_rate" data-bind="visible: panelView().visibility">
               <div class="g-rate">Gelp Rating:
-                <div class="flex2" data-bind="text: currentYelp().rating"></div>
+                <div class="flex2" data-bind="text: panelView().rating"></div>
               </div>
             </div>
           </div>
@@ -50,14 +48,14 @@
       <!--Close panel button, filter textInput and reset filter button-->
         <div class="flex">
           <p class="flex2">
-            <button class="button" id="yelpTog" data-bind="click: currentYelp().set_hidden">Close</button>
+
             <input class="textArea" style="width=80%" data-bind="textInput: user_input" placeholder="Filter checks types, name and address"/>
             <button class="button" id="reset_filter" data-bind="click: resetFilter">Reset Filter</button>
           </p>
         </div>
       <!--Displays content from Yelp and Google Places Service, toggles visible with set_visible and hidden with set_hidden-->
-        <div data-bind="visible: currentYelp().visibility">
-          <div id="yelp" data-bind="with: currentYelp">
+        <div data-bind="visible: panelView().visibility">
+          <div id="yelp" data-bind="with: panelView">
             <div data-bind="" class="flex">
               <h2 >Reviews:</h2>
               <div class="rev_com" data-bind="if: (typeof(gPlace)=="function"), foreach: gPlace().reviews, text: text"></div>
@@ -87,7 +85,8 @@
       </div>
     </div>
     <!--Application Scripts Go Here-->
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
     <script async src="js/lib/oauth-signature.min.js"></script>
     <script async src="js/keys.min.js"></script>
     <script async src="js/appV2.js"></script>
