@@ -34,7 +34,7 @@
                 <tr width="100%"><th class="ham_menu_head">Locations</th></tr>
               </thead>
               <tbody data-bind="foreach: places">
-                <tr id="" data-bind="if: vis, data: places, click: $data.setYelp"><td class="hamburger_menu" data-bind="text: name"></td></tr>
+                <tr id="" data-bind="if: vis, data: places, click: google.maps.event.trigger($data.markerId(),'click')"><td class="hamburger_menu" data-bind="text: name"></td></tr>
               </tbody>
             </table>
             <div id="menu_rate" data-bind="visible: panelView().visibility">
