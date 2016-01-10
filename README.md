@@ -51,19 +51,19 @@ App displayed on mobile device with hamburger menu. (One possible mobile impleme
 Code Sources:
 
 Yelp Functions: Several code snippets were used and experimented on to get the OAuth code to work for getting a Yelp import
-001: 'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'
+#001: 'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'
 This paired well with snippets from source #001 to create a funtionaly working nonce generator for the OAuth sequence
-002: 'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'
+#002: 'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'
 
 
 Map Functions:
 Previous project Online Resume V2
 
 Handle infoWindow:
-003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
+#003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
 
 Map Styles:
-005: 'https://mapbuildr.com/buildr'}
+#005: 'https://mapbuildr.com/buildr'}
 
 
 
