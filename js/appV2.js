@@ -257,7 +257,7 @@ var HandleInfoWindow = function(place, content) {
       content += '<img src="' + place.locImg() + '" class="images">';
     }
     // Checking for reviews from google place service
-    if (typeOf(place.gPlace().reviews)==="array") {
+    if (gPlace().hasOwnProperty('reviews')) {
       content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div></div>';
     } else{
       content += '</div>';
