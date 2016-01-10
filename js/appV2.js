@@ -194,7 +194,10 @@ var ViewModel = function() {
       }
       // Checking for photos from google place service
       if ((typeof place.gPlace().photos) !== 'undefined'){
-        content += '<img src="' + place.gPlace().photos[0].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" height="100px" class="images">';
+        for (var ph in place.gPlace().photos){
+          content += '<img src="' + place.gPlace().photos[ph].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" height="100px" class="images">';
+        }
+
       } else {
         content += '<img src="' + place.locImg() + '" height="100px" class="images">';
       }
