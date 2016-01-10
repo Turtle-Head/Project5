@@ -85,4 +85,4 @@ Map Styles:
 ----------------------------------------
 #Current Issues:
 
-1: Menu is non-funcitonal but filters fine
+1: None yet
