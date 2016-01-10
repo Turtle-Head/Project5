@@ -2,9 +2,12 @@
 Neighborhood Map Project for Udacity FEND Program
 #------------------------------------------------
 ----------------------------------------
-Getting Started:
+#Getting Started:
 
-Open index.html in your favorite browser
+#Open index.html in your favorite browser
+
+#Alternatively:
+'http://turtle-head.github.io/Project5/'
 
 ----------------------------------------
 Instructor Notes:
