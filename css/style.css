@@ -9,8 +9,6 @@ div{
   padding-top: 1px;
 }
 .map{
-  height: 400px;
-  width: 85%;
   background-color: #CCC;
   align-content: flex-end;
   display:inline-block;
@@ -150,4 +148,16 @@ tr {
 .filter_opt{
   font-size: 1.15;
   margin: 2px 2% 2px 2%;
+}
+@media all and (orientation:portrait){
+  .map{
+    height: 1000px;
+    width: 85%;
+  }
+}
+@media all and (orientation:landscape){
+  .map{
+    height: 400px;
+    width: 85%;
+  }
 }
