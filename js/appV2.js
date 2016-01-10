@@ -177,9 +177,6 @@ var ViewModel = function() {
     }
     return self.currentYelp();
   }, this);
-  // Show Data Model in console for dev purposes
-  console.log('Places Model:');
-  console.log(self.places());
   // *******************************************************************
   // Creates the infoWindow based on data in the model, shows the marker
   // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
@@ -210,7 +207,6 @@ var ViewModel = function() {
       infoWindow.setContent(content);
       infoWindow.setPosition(position);
       infoWindow.open(map);
-      console.log(place.name());
       self.places()[index].visibility(true);
   };
   // *******************************************************************
@@ -231,7 +227,6 @@ var ViewModel = function() {
   };
 
   var createMapMarker = function(obj, p, pname) {
-    console.log(obj);
     // The next lines save location data from the search result object to local variables
     var lat = obj.geometry.location.lat();  // latitude from the place service
     var lon = obj.geometry.location.lng();  // longitude from the place service
@@ -295,7 +290,6 @@ var ViewModel = function() {
       //***************************************************************************
       // Google Places Error Handling
       alert('Failed to import Google Places data');
-      console.log(status);
       // End of Google Places Error Handling
       //***************************************************************************
     }
