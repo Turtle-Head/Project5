@@ -2,7 +2,12 @@
 Author: James Fehr
 Project Description:
 This project is Project #5 of the Front End Nano Degree program at Udacity
+----------------------------------------
+Getting Started:
 
+Open index.html in your favorite browser
+
+----------------------------------------
 Instructor Notes:
 ----------------------------------------
 Project Overview
