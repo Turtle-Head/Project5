@@ -202,8 +202,8 @@ var ViewModel = function() {
         content += '<img src="' + place.locImg() + '" height="100px" class="images">';
       }
       // Checking for reviews from google place service
-      if (place.gPlace().reviews.length > 0) {
-        content += '<div class="rev_com">' + place.gPlace().reviews[0].text + '</div></div>';
+      if ((typeof place.yelp().snippet_text) !== 'undefined') {
+        content += '<div class="rev_com">' + place.yelp().snippet_text + '</div></div>';
       } else{
         content += '</div></div>';
       }
@@ -230,11 +230,12 @@ var ViewModel = function() {
     } else return false;
   };
 
-  var createMapMarker = function(obj, p) {
+  var createMapMarker = function(obj, p, pname) {
+    console.log(obj);
     // The next lines save location data from the search result object to local variables
     var lat = obj.geometry.location.lat();  // latitude from the place service
     var lon = obj.geometry.location.lng();  // longitude from the place service
-    var name = obj.formatted_address;   // name of the place from the place service
+    var name = pname;   // name of the place from the place service
     var bounds = window.mapBounds;            // current boundaries of the map window
     // marker is an object with additional data about the pin for a single location
     var icn = 'img/marker3.png';
@@ -284,7 +285,7 @@ var ViewModel = function() {
         if (results.name.toLowerCase() == self.places()[i].name().toLowerCase()){
           // Stores results for later use
           self.places()[i].gPlace(results);
-          createMapMarker(results, i);
+          createMapMarker(results, i, results.name);
           // Creates positional data holder for ease of use
           self.places()[i].lat(results.geometry.location.lat());
           self.places()[i].lng(results.geometry.location.lng());
