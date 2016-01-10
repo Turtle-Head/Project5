@@ -214,6 +214,9 @@ var ViewModel = function() {
   };
   // *******************************************************************
   this.user_input = ko.observable("");
+  this.filter_address = ko.observable(true);
+  this.filter_types = ko.observable(true);
+  this.filter_names = ko.observable(true);
   var showApp = function() {
     if(self.places()[0]) loading(true);
   };
@@ -387,15 +390,20 @@ var ViewModel = function() {
         for (var c in self.places()){
           self.places()[c].vis(false);
           // Sort through the remaining non-visible markers to find additinoal matches and toggle them visible
-          for (var d in self.places()[c].types()){
-            if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis()) {
-              self.places()[c].vis(true);
+          // Types Filter
+          if (self.filter_types()) {
+            for (var d in self.places()[c].types()){
+              if (stringFinder((self.places()[c].types()[d]).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis()) {
+                self.places()[c].vis(true);
+              }
             }
           }
-          if (stringFinder((self.places()[c].name()).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis()) {
+          // Name Filter
+          if (self.filter_names() && (stringFinder((self.places()[c].name()).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis())) {
             self.places()[c].vis(true);
           }
-          if (stringFinder((self.places()[c].address()).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis()) {
+          // Address filter
+          if (self.filter_address() && (stringFinder((self.places()[c].address()).toLowerCase(), (self.user_input()).toLowerCase()) && !self.places()[c].vis())) {
             self.places()[c].vis(true);
           }
           // Shows markers if toggled visible
@@ -411,6 +419,3 @@ var ViewModel = function() {
   }, this);
   showApp();
 };
-
-// Apply the bindings and make it stick
-// ko.applyBindings(ViewModel());
