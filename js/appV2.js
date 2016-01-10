@@ -104,7 +104,6 @@ var PlaceData = function(data){
       }));
     }
   }
-
   //Begin Yelp Call
   // Randomize the nonce generator randomly
   var randomizeN;
@@ -148,13 +147,14 @@ var PlaceData = function(data){
   $.ajax(settings);
   // End Yelp Call
   this.contentString = ko.observable('');
-
-
   var setYelp = function(clickedPlace){
-    //self.currentYelp(clickedPlace); // sets current pushed button as yelp panel info
-    PD.visibility(true); // opens panel, shows gelp rating
+    for (var x in places()) {
+      places()[x].visibility(false);
+    }
+    this.visibility(true); // opens panel, shows gelp rating
     google.maps.event.trigger(this.markerId(),'click');
   };
+
 };
 // View Model calls all the things, create *new places* to add them to the model
 var ViewModel = function() {
@@ -210,7 +210,7 @@ var ViewModel = function() {
       infoWindow.setContent(content);
       infoWindow.setPosition(position);
       infoWindow.open(map);
-      console.log(place);
+      console.log(place.name());
       self.places()[index].visibility(true);
   };
   // *******************************************************************
