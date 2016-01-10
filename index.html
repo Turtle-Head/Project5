@@ -34,7 +34,7 @@
                 <tr width="100%"><th class="ham_menu_head">Locations</th></tr>
               </thead>
               <tbody data-bind="foreach: places">
-                <tr id="" data-bind="if: vis, data: places, click: $data.setYelp"><td class="hamburger_menu" data-bind="text: name"></td></tr>
+                <tr id="" data-bind="if: vis, data: places, click: google.maps.event.trigger($data.markerId(),'click')"><td class="hamburger_menu" data-bind="text: name"></td></tr>
               </tbody>
             </table>
             <div id="menu_rate" data-bind="visible: panelView().visibility">
@@ -60,9 +60,6 @@
               <h2 >Reviews:</h2>
               <li class="rev_com" data-bind="foreach: gReview">
                 <ul data-bind="text: text"></ul>
-              </li>
-              <li>
-                <ul class="rev_com" data-bind="text: yelp().snippet_text"></ul>
               </li>
             </div>
             <div class="flex">
