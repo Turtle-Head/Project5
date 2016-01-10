@@ -63,13 +63,16 @@ Previous project Online Resume V2
 Handle infoWindow:
 #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'
 
-Testing Strings as objects oc function:
-#004: 'http://snook.ca/archives/javascript/testing_for_a_v'
-
 Map Styles:
 #005: 'https://mapbuildr.com/buildr'}
 
+#Source depreciated
+Testing Strings as objects oc function:
+#004: 'http://snook.ca/archives/javascript/testing_for_a_v'
+
+
+
 ----------------------------------------
-Current Issues:
+#Current Issues:
 
 1: Menu is non-funcitonal but filters fine
