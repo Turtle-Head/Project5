@@ -4,16 +4,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="author" content="James Fehr">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gelp-Bernard Avenue, Kelowna, BC</title>
     <link rel="stylesheet" href="css/style.min.css">
   </head>
   <body>
     <!--CDN Scripts for Application functionality-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="js/lib/oauth-signature.min.js"></script>
+    <script src="js/keys.min.js"></script>
+    <script src="js/appV2.min.js"></script>
     <script>function googleSuccess() {ko.applyBindings(new ViewModel());}
       function Error() {alert('Failed to load resources');}
     </script>
     <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places&callback=googleSuccess" onerror="Error()"></script>
-    <script async src="https://code.jquery.com/jquery-2.1.4.js"></script>
     <!--Content Goes Here-->
     <div id="content" class="flex, panel"  data-bind="if: loading">
       <div class="head" style="align: center;">
@@ -84,12 +90,9 @@
         </div>
       </div>
     </div>
-    <!--Application Scripts Go Here-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
-    <script async src="js/lib/oauth-signature.min.js"></script>
-    <script async src="js/keys.min.js"></script>
-    <script async src="js/appV2.min.js"></script>
+    <!--Application Scripts Used to Go Here-->
+
+
     <!---->
   </body>
 </html>
