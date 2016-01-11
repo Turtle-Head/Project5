@@ -12,7 +12,7 @@ Alternatively:
 
 Requirements:
 Javascript enabled
-Chrome* Firefox Explorer or Edge work as intended
+Chrome*, Firefox, Explorer, or Edge work as intended
 
 -----------------------------------------
 
