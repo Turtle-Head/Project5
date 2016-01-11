@@ -36,7 +36,7 @@ Map Styles:
 
 Bug Reporting: 
 
-Email me mailto://fehr.james@gmail.com , thanks for taking the time to let me know what doesn't work so I can make it better.
+Email me at fehr.james@gmail.com and thanks for taking the time to let me know what doesn't work so I can make it better.
 
 ----------------------------------------
 #Current Issues:
