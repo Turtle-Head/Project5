@@ -58,47 +58,47 @@ var PlaceData = function(data){
       // Return e for use with the import data functions
     return(e);
   };
-  this.id = data.id; // Google Places ID for data lookup
-  this.vis = ko.observable(true); // sets visibility
-  this.name = ko.observable(data.name);
-  this.address = ko.observable(data.address);
-  this.city = ko.observable('Kelowna');
-  this.province = ko.observable('British Columbia');
-  this.location = searchString(data.name + ' ' + data.address) + '+Kelowna+British+Columbia';
-  this.svLoc = searchString(data.address) + '+Kelowna+British+Columbia';
-  this.yelp = ko.observable(0);
-  this.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.svLoc + ' width="350px"');
-  this.markerId = ko.observable(0);
-  this.gPlace = ko.observable(0);
-  this.lat = ko.observable(0);
-  this.lng = ko.observable(0);
-  this.visibility = ko.observable(false);
-  this.rating = ko.computed(function() {
-    return ((this.gPlace().rating + this.yelp().rating)/2);
+  PD.id = data.id; // Google Places ID for data lookup
+  PD.vis = ko.observable(true); // sets visibility
+  PD.name = ko.observable(data.name);
+  PD.address = ko.observable(data.address);
+  PD.city = ko.observable('Kelowna');
+  PD.province = ko.observable('British Columbia');
+  PD.location = searchString(data.name + ' ' + data.address) + '+Kelowna+British+Columbia';
+  PD.svLoc = searchString(data.address) + '+Kelowna+British+Columbia';
+  PD.yelp = ko.observable(0);
+  PD.locImg = ko.observable('https://maps.googleapis.com/maps/api/streetview?size=350x150&location=' + this.svLoc + ' width="350px"');
+  PD.markerId = ko.observable(0);
+  PD.gPlace = ko.observable(0);
+  PD.lat = ko.observable(0);
+  PD.lng = ko.observable(0);
+  PD.visibility = ko.observable(false);
+  PD.rating = ko.computed(function() {
+    return ((PD.gPlace().rating + PD.yelp().rating)/2);
   }, this);
-  this.gReview = ko.computed(function() {
-    return (this.gPlace().reviews);
+  PD.gReview = ko.computed(function() {
+    return (PD.gPlace().reviews);
   }, this);
-  this.types = ko.computed(function() {
+  PD.types = ko.computed(function() {
     var tp = [];
-    for (var i in this.gPlace().types){
-      tp.push(this.gPlace().types[i]);
+    for (var i in PD.gPlace().types){
+      tp.push(PD.gPlace().types[i]);
     }
-    for (var y in this.yelp().categories){
-      for (var n in this.yelp().categories[y]){
-        tp.push(this.yelp().categories[y][n]);
+    for (var y in PD.yelp().categories){
+      for (var n in PD.yelp().categories[y]){
+        tp.push(PD.yelp().categories[y][n]);
       }
     }
     return tp;
   }, this);
   var setVis = function() {
-    this.visibility(!this.visibility());
+    PD.visibility(!PD.visibility());
   };
   var photos = ko.observableArray([]);
   // Gets URLs for all photos returned by the google details call
-  if (typeof(this.gPlace().photo) !== 'undefined'){
-    for (var i in this.gPlace().photos()) {
-      photos().push(this.gPlace().photos[i].getUrl({
+  if (typeof(PD.gPlace().photo) !== 'undefined'){
+    for (var i in PD.gPlace().photos()) {
+      photos().push(PD.gPlace().photos[i].getUrl({
         'maxWidth': 350,
         'maxHeight': 100
       }));
@@ -138,21 +138,27 @@ var PlaceData = function(data){
     success: function(results) {
       // Pass Yelp Object out to the parent object
       PD.yelp(results.businesses[0]);
+      clearTimeout(yTimeout);
     },
     error: function() {
       // Do stuff on fail
-      alert('Failed to import Yelp data');
+      alert('Failed to import Yelp Data. Status: ' + textStatus + ' Error: ' + errorThrown);
     }
   };
+  // Set a Timeout for the AJAX Yelp data import
+  // {SRC: #006:'https://www.udacity.com/course/viewer#!/c-ud110/l-3310298553/m-3162128592'}
+  var yTimeout = setTimeout(function(){
+    alert("Yelp appears to be down, please try again later");
+  }, 8000);
   $.ajax(settings);
   // End Yelp Call
-  this.contentString = ko.observable('');
+  PD.contentString = ko.observable('');
   var setYelp = function(clickedPlace){
     for (var x in places()) {
       places()[x].visibility(false);
     }
-    this.visibility(true); // opens panel, shows gelp rating
-    google.maps.event.trigger(this.markerId(),'click');
+    PD.visibility(true); // opens panel, shows gelp rating
+    google.maps.event.trigger(PD.markerId(),'click');
   };
 
 };
@@ -160,13 +166,13 @@ var PlaceData = function(data){
 var ViewModel = function() {
   var self = this;
   // Creates an array of places for use in the app with knockout bindings
-  this.places = ko.observableArray([]);
-  this.currentYelp = ko.observable();
+  self.places = ko.observableArray([]);
+  self.currentYelp = ko.observable();
   pDmodel.forEach(function(pDmItem){
     self.places.push( new PlaceData(pDmItem) );
   });
-  this.currentYelp(this.places()[0]);
-  this.panelView = ko.computed(function(){
+  self.currentYelp(this.places()[0]);
+  self.panelView = ko.computed(function(){
     if (typeof(places)=="function"){
       for (var x = 0; x < places().length; x++){
         if (places()[x].visibility()){
@@ -214,15 +220,15 @@ var ViewModel = function() {
       self.places()[index].visibility(true);
   };
   // *******************************************************************
-  this.user_input = ko.observable("");
-  this.filter_address = ko.observable(true);
-  this.filter_types = ko.observable(true);
-  this.filter_names = ko.observable(true);
+  self.user_input = ko.observable("");
+  self.filter_address = ko.observable(true);
+  self.filter_types = ko.observable(true);
+  self.filter_names = ko.observable(true);
   var showApp = function() {
     if(self.places()[0]) loading(true);
   };
   // Reset filter function
-  this.resetFilter = function() {
+  self.resetFilter = function() {
     self.user_input('');
   };
   // String Comparison truthy falsy return for indexOf
@@ -261,20 +267,20 @@ var ViewModel = function() {
       // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
       // Set up the infoWindow for the current marker
       HandleInfoWindow(self.places()[p], contentString, p);
-      // Bounce the current marker until clicked again showing users content they have seen
-      // so they can look at the other content before coming back to this one
-      if (marker.getAnimation() !== null) {
-        marker.setAnimation(null);
-      } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
+      // Bounce the current marker until the next marker is clicked
+      for (var x in self.places()){
+        if (self.places()[x].markerId().getAnimation() !== null) {
+          self.places()[x].markerId().setAnimation(null);
+        }
       }
+      self.places()[p].markerId().setAnimation(google.maps.Animation.BOUNCE);
       self.currentYelp(self.places()[p]); // sets current pushed button as yelp panel info
       self.places()[p].visibility(true);  // Make the information visible
     });
     google.maps.event.addListener(infoWindow,'closeclick',function(){
-    for (var i = 0; i < self.places().length; i++) {
-      self.places()[i].visibility(false);  // Hide the silverware etc and maybe the information too
-      }
+      self.places().forEach(function(place) {
+        place.visibility(false);  // Hide the silverware etc and maybe the information too
+      });
     });
     // this is where the pin actually gets added to the map.
     // bounds.extend() takes in a map location object
@@ -381,7 +387,7 @@ var ViewModel = function() {
   };
   MapViewModel();
   // Filters location list for user_input
-  this.filterData = ko.computed(function(){
+  self.filterData = ko.computed(function(){
     // Checks user_input to determine if the user has entered any terms, additionally checks places() to determine if the array is populated yet
     // Show all markers if filter is empty
     if ((self.user_input().length === 0) && (self.places().length > 0)) {
