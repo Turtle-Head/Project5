@@ -1,8 +1,11 @@
 ![alt text](https://github.com/Turtle-Head/Project5/blob/master/img/Gelp.png "Gelp 2016")
 
 January 11, 2016
+
 <Author:> James Fehr
+
 <Email:> fehr.james@gmail.com
+
 ## Gelp aka. Project 5: Neighborhood Map Project for Udacity FEND Program
 
 ### Getting Started:
