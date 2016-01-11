@@ -12,7 +12,7 @@
     <script>function googleSuccess() {ko.applyBindings(new ViewModel());}
       function Error() {alert('Failed to load resources');}
     </script>
-    <script async type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places&callback=googleSuccess" onerror="Error()"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD77-4_C9EZCXu_BdW1oXWH22fV9q41gcE&libraries=places&callback=googleSuccess" onerror="Error()"></script>
     <script async src="https://code.jquery.com/jquery-2.1.4.js"></script>
     <!--Content Goes Here-->
     <div id="content" class="flex, panel"  data-bind="if: loading">

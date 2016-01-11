@@ -178,7 +178,8 @@ var ViewModel = function() {
     return self.currentYelp();
   }, this);
   // *******************************************************************
-  // Creates the infoWindow based on data in the model, shows the marker
+  // Creates the infoWindow based on data in the model for the current marker or menu item
+  // Also sets the place as visible, making it's best effort to display as much content as possible
   // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
   var infoWindow;
   var HandleInfoWindow = function(place, content, index) {
@@ -257,18 +258,22 @@ var ViewModel = function() {
     // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
     // adds another listener to the yelpTog which closes both the yelp panel and the infoWindow to avoid clutter
     google.maps.event.addListener(marker, 'click', function(evt) {
-      HandleInfoWindow(self.places()[p], contentString, p); // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
+      // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
+      // Set up the infoWindow for the current marker
+      HandleInfoWindow(self.places()[p], contentString, p);
+      // Bounce the current marker until clicked again showing users content they have seen
+      // so they can look at the other content before coming back to this one
       if (marker.getAnimation() !== null) {
         marker.setAnimation(null);
       } else {
         marker.setAnimation(google.maps.Animation.BOUNCE);
       }
       self.currentYelp(self.places()[p]); // sets current pushed button as yelp panel info
-      self.places()[p].visibility(true);
+      self.places()[p].visibility(true);  // Make the information visible
     });
     google.maps.event.addListener(infoWindow,'closeclick',function(){
       for (var i = 0; i < self.places().length; i++) {
-        self.places()[i].visibility(false);
+        self.places()[i].visibility(false);  // Hide the silverware etc and maybe the information too
       }
     });
     // this is where the pin actually gets added to the map.
