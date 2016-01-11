@@ -272,8 +272,8 @@ var ViewModel = function() {
       self.places()[p].visibility(true);  // Make the information visible
     });
     google.maps.event.addListener(infoWindow,'closeclick',function(){
-      for (var i = 0; i < self.places().length; i++) {
-        self.places()[i].visibility(false);  // Hide the silverware etc and maybe the information too
+    for (var i = 0; i < self.places().length; i++) {
+      self.places()[i].visibility(false);  // Hide the silverware etc and maybe the information too
       }
     });
     // this is where the pin actually gets added to the map.
