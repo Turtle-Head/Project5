@@ -400,6 +400,7 @@ var ViewModel = function() {
         }
       }
     } else if (self.places().length > 0) {
+        infoWindow.close();
         for (var c in self.places()){
           self.places()[c].vis(false);
           // Sort through the remaining non-visible markers to find additinoal matches and toggle them visible
