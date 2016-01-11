@@ -9,13 +9,16 @@
     <link rel="stylesheet" href="css/style.min.css">
   </head>
   <body>
-    <!--CDN Scripts for Application functionality-->
+    <!--Scripts for Application functionality-->
+    <!--CDNs-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
     <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <!--Application-->
     <script src="js/lib/oauth-signature.min.js"></script>
     <script src="js/keys.min.js"></script>
     <script src="js/appV2.min.js"></script>
+    <!--Google API ASYNC Load-->
     <script>function googleSuccess() {ko.applyBindings(new ViewModel());}
       function Error() {alert('Failed to load resources');}
     </script>
@@ -90,9 +93,5 @@
         </div>
       </div>
     </div>
-    <!--Application Scripts Used to Go Here-->
-
-
-    <!---->
   </body>
 </html>

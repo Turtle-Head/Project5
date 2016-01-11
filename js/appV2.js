@@ -258,7 +258,9 @@ var ViewModel = function() {
     // This infoWindow should have a streetview image as well as name of establishment and address but wait, can it have more....?
     // Look at the HandleInfoWindow function to see what it all gets
     var contentString = '';
-    infoWindow = new google.maps.InfoWindow();
+    infoWindow = new google.maps.InfoWindow({
+      maxWidth: 250
+    });
 
     // Adds listener to map markers
     // This listener tells the markers to bounce, show an infoWindow, show yelp data on a panel below the map and
