@@ -11,7 +11,7 @@ div{
 .map{
   background-color: #ccc;
   position: absolute;
-  left: 10px;
+  left: 15%;
   top: 175px;
 }
 .flex{
@@ -67,6 +67,7 @@ p{
   font-size: 1.5em;
   font-style: oblique;
   width: 100%;
+  opacity: 40%;
 }
 .hamburger_menu{
   color: white;
@@ -93,11 +94,19 @@ p{
 .g-rate{
   padding: 10px;
   margin: 5px;
-  font-size: 2em;
+  font-size: 1.5em;
 }
 .g-rate{
   text-align: center;
-  color: #80bfff;
+  -webkit-text-stroke: 1px #80bfff;
+  color: white;
+  text-shadow:
+      3px 3px 0 #000,
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+     -1px 1px 0 #000,
+      1px 1px 0 #000;
+  opacity: 75%;
 }
 .phone{
   padding: 10px;
@@ -161,7 +170,10 @@ tr {
 @media all and (orientation:portrait){
   .map{
     height: 400px;
-    width: 99%;
+    width: 71%;
+    position: absolute;
+    left: 25%;
+    top: 175px;
   }
   .top_filter{
     display: inline-block;
@@ -170,7 +182,10 @@ tr {
 @media all and (orientation:landscape){
   .map{
     height: 400px;
-    width: 99%;
+    width: 82%;
+    position: absolute;
+    left: 15%;
+    top: 175px;
   }
   .top_filter{
     display: inline;
