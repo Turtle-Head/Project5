@@ -10,8 +10,9 @@ div{
 }
 .map{
   background-color: #ccc;
-  align-content: flex-end;
-  display:inline-block;
+  position: absolute;
+  left: 10px;
+  top: 175px;
 }
 .flex{
   display: flex;
@@ -23,6 +24,10 @@ div{
   display: inline-block;
 }
 .menu_elem{
+  position: absolute;
+  left: 10px;
+  top: 175px;
+  z-index: 99;
   display: inline-block;
   width: 15%;
 }
@@ -92,6 +97,7 @@ p{
 }
 .g-rate{
   text-align: center;
+  color: #80bfff;
 }
 .phone{
   padding: 10px;
@@ -134,6 +140,9 @@ h1{
   -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
   box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
 }
+.top_filter{
+  font-size: 1em;
+}
 .rev_com{
   display: block;
   text-align: justify;
@@ -151,13 +160,19 @@ tr {
 }
 @media all and (orientation:portrait){
   .map{
-    height: 1000px;
-    width: 85%;
+    height: 400px;
+    width: 99%;
+  }
+  .top_filter{
+    display: inline-block;
   }
 }
 @media all and (orientation:landscape){
   .map{
     height: 400px;
-    width: 85%;
+    width: 99%;
+  }
+  .top_filter{
+    display: inline;
   }
 }
