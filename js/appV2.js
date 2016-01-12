@@ -168,6 +168,7 @@ var ViewModel = function() {
   // Creates an array of places for use in the app with knockout bindings
   self.places = ko.observableArray([]);
   self.currentYelp = ko.observable();
+  self.menu_vis = ko.observable(true);
   pDmodel.forEach(function(pDmItem){
     self.places.push( new PlaceData(pDmItem) );
   });
@@ -218,6 +219,7 @@ var ViewModel = function() {
       infoWindow.setPosition(position);
       infoWindow.open(map);
       self.places()[index].visibility(true);
+      self.menu_vis(false);
   };
   // *******************************************************************
   self.user_input = ko.observable("");
@@ -268,6 +270,7 @@ var ViewModel = function() {
     google.maps.event.addListener(marker, 'click', function(evt) {
       // {SRC: #003: 'http://jsfiddle.net/bryan_weaver/z3Cdg/'}
       // Set up the infoWindow for the current marker
+      self.menu_vis(false);
       HandleInfoWindow(self.places()[p], contentString, p);
       // Bounce the current marker until the next marker is clicked
       for (var x in self.places()){
@@ -283,6 +286,7 @@ var ViewModel = function() {
       self.places().forEach(function(place) {
         place.visibility(false);  // Hide the silverware etc and maybe the information too
       });
+      self.menu_vis(true);
     });
     // this is where the pin actually gets added to the map.
     // bounds.extend() takes in a map location object
@@ -401,6 +405,7 @@ var ViewModel = function() {
       }
     } else if (self.places().length > 0) {
         infoWindow.close();
+        self.menu_vis(true);
         for (var c in self.places()){
           self.places()[c].vis(false);
           // Sort through the remaining non-visible markers to find additinoal matches and toggle them visible
