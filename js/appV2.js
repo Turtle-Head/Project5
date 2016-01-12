@@ -224,7 +224,7 @@ var ViewModel = function() {
       self.menu_vis(false);
   };
   // *******************************************************************
-  self.user_input = ko.observable("");
+  self.user_input = ko.observable('');
   self.filter_address = ko.observable(true);
   self.filter_types = ko.observable(true);
   self.filter_names = ko.observable(true);
@@ -238,9 +238,7 @@ var ViewModel = function() {
   // String Comparison truthy falsy return for indexOf
   // Takes in 2 strings as parameters, returns true if parameter b is found in parameter a
   var stringFinder = function(a, b) {
-    if (a.indexOf(b) >= 0) {
-      return true;
-    } else return false;
+    return a.indexOf(b) >=0 ? true : false;
   };
 
   var createMapMarker = function(obj, p, pname) {
