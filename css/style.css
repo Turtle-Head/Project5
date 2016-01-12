@@ -182,9 +182,9 @@ tr {
 @media all and (orientation:landscape){
   .map{
     height: 400px;
-    width: 82%;
+    width: 99%;
     position: absolute;
-    left: 15%;
+    left: 10px;
     top: 175px;
   }
   .top_filter{

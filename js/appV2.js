@@ -436,5 +436,23 @@ var ViewModel = function() {
     }
     return self.user_input();
   }, this);
+  // Determines orientation of screen, sets the View up for each orientation
+  // {SRC: #007: 'http://stackoverflow.com/questions/4917664/detect-viewport-orientation-if-orientation-is-portrait-display-alert-message-ad'}
+  self.initZoom = ko.observable(map.getZoom());
+  self.windowOrientation = ko.computed(function(){
+    if (window.matchMedia("(orientation: portrait)").matches) {
+   // you're in PORTRAIT mode
+      if (self.initZoom() > 1){
+        map.setZoom(self.initZoom() - 1);
+      }
+
+    }
+    if (window.matchMedia("(orientation: landscape)").matches) {
+   // you're in LANDSCAPE mode
+      map.setZoom(self.initZoom());
+    }
+    return false;
+  }, this);
+
   showApp();
 };
