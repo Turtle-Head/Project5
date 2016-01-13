@@ -23,10 +23,17 @@ div{
 .flex2{
   display: inline-block;
 }
+.menu_rate{
+  position: absolute;
+  left: 10px;
+  top: 250px;
+  z-index: 99;
+  opacity: 0.5;
+}
 .menu_elem{
   position: absolute;
   left: 10px;
-  top: 175px;
+  top: 250px;
   z-index: 99;
   display: inline-block;
   width: 15%;
@@ -67,7 +74,7 @@ p{
   font-size: 1.5em;
   font-style: oblique;
   width: 100%;
-  opacity: 40%;
+  opacity: 0.4;
 }
 .hamburger_menu{
   color: white;
@@ -75,6 +82,7 @@ p{
   text-align: center;
   font-size: 1.25em;
   font-style: oblique;
+  opacity: 0.5;
 }
 .button:hover,
 .button:focus {
@@ -95,6 +103,7 @@ p{
   padding: 10px;
   margin: 5px;
   font-size: 1.5em;
+
 }
 .g-rate{
   text-align: center;
@@ -106,7 +115,8 @@ p{
      1px -1px 0 #000,
      -1px 1px 0 #000,
       1px 1px 0 #000;
-  opacity: 75%;
+  z-index: 99;
+  opacity: 0.5;
 }
 .phone{
   padding: 10px;
@@ -120,8 +130,8 @@ h2{
   margin: 2%;
 }
 img{
-  margin: 5px;
-  padding: 10px;
+  margin: 3px;
+  padding: 3px;
 }
 h1{
   font-size: 1.5em;

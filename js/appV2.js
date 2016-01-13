@@ -200,8 +200,6 @@ var ViewModel = function() {
       } else {
         content += '<div width="350px" class="flex"><div class="flex2"><div class="inf-Win">' + place.name() + '</div><div class="inf-Win">' + place.address() + '</div>';
       }
-      //Place the Gelp Ra
-      content+= '<div class="flex, g-rate" style="align:center;"><img class="flex2" src="img/rating.png" height="50px" alt="Gelp Rating:"><div class="flex2, g-rate" style="background-color:#24248f;">' + place.rating() + '</div></div>';
       // Checking for photos from google place service
       if ((typeof place.gPlace().photos) !== 'undefined'){
         for (var ph in place.gPlace().photos){
