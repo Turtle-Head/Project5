@@ -323,7 +323,6 @@ var ViewModel = function() {
     var mapOptions = {
       disableDefaultUI: false,
       mapTypeId: google.maps.MapTypeId.HYBRID,
-      tilt: 45,
       heading: 0,
       scrollwheel: false,
       scaleControl: false,
