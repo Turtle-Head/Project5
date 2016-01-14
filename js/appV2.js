@@ -159,6 +159,7 @@ var PlaceData = function(data){
     }
     PD.visibility(true); // opens panel, shows gelp rating
     google.maps.event.trigger(PD.markerId(),'click');
+    map.setCenter(PD.markerId().location);
   };
 
 };
@@ -279,12 +280,14 @@ var ViewModel = function() {
       self.places()[p].markerId().setAnimation(google.maps.Animation.BOUNCE);
       self.currentYelp(self.places()[p]); // sets current pushed button as yelp panel info
       self.places()[p].visibility(true);  // Make the information visible
+      map.setCenter(marker.location);
     });
     google.maps.event.addListener(infoWindow,'closeclick',function(){
       self.places().forEach(function(place) {
         place.visibility(false);  // Hide the silverware etc and maybe the information too
       });
       self.menu_vis(true);
+      map.setCenter(bounds.getCenter());
     });
     // this is where the pin actually gets added to the map.
     // bounds.extend() takes in a map location object
@@ -320,6 +323,8 @@ var ViewModel = function() {
     var mapOptions = {
       disableDefaultUI: false,
       mapTypeId: google.maps.MapTypeId.HYBRID,
+      tilt: 45,
+      heading: 0,
       scrollwheel: false,
       scaleControl: false,
       zoomControl: false,
@@ -438,16 +443,20 @@ var ViewModel = function() {
   // {SRC: #007: 'http://stackoverflow.com/questions/4917664/detect-viewport-orientation-if-orientation-is-portrait-display-alert-message-ad'}
   self.initZoom = ko.observable(map.getZoom());
   self.windowOrientation = ko.computed(function(){
+    var heading = map.getHeading() || 0;
     if (window.matchMedia("(orientation: portrait)").matches) {
    // you're in PORTRAIT mode
       if (self.initZoom() > 1){
         map.setZoom(self.initZoom() - 1);
       }
-
+      map.setHeading(heading + 90);
     }
     if (window.matchMedia("(orientation: landscape)").matches) {
    // you're in LANDSCAPE mode
       map.setZoom(self.initZoom());
+      if (heading !== 0) {
+        map.setHeading(0);
+      }
     }
     return false;
   }, this);
