@@ -73,6 +73,7 @@ var PlaceData = function(data){
   PD.lat = ko.observable(0);
   PD.lng = ko.observable(0);
   PD.visibility = ko.observable(false);
+  PD.review_count = ko.observable();
   PD.rating = ko.computed(function() {
     return ((PD.gPlace().rating + PD.yelp().rating)/2);
   }, this);
@@ -206,13 +207,12 @@ var ViewModel = function() {
         for (var ph in place.gPlace().photos){
           content += '<img src="' + place.gPlace().photos[ph].getUrl({'maxWidth': 350, 'maxHeight': 100}) + '" height="100px" class="images">';
         }
-
       } else {
         content += '<img src="' + place.locImg() + '" height="100px" class="images">';
       }
-      // Checking for reviews from google place service
+      // Checking for reviews from Yelp service
       if ((typeof place.yelp().snippet_text) !== 'undefined') {
-        content += '<div class="rev_com">' + place.yelp().snippet_text + '</div></div>';
+        content += '<div class="rev_com">' + place.yelp().snippet_text + '</div><div>Yelp Review Count: '+ place.yelp().review_count +' </div></div>';
       } else{
         content += '</div></div>';
       }
