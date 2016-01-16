@@ -178,8 +178,8 @@ var ViewModel = function() {
   self.panelView = ko.computed(function(){
     if (typeof(places)=="function"){
       for (var x = 0; x < places().length; x++){
-        if (places()[x].visibility()){
-          self.currentYelp(places()[x]);
+        if (self.places()[x].visibility()){
+          self.currentYelp(self.places()[x]);
           self.currentYelp().visibility(true);
         }
       }
@@ -221,6 +221,7 @@ var ViewModel = function() {
       infoWindow.open(map);
       self.places()[index].visibility(true);
       self.menu_vis(false);
+      $('#rrr').width((self.places()[index].rating() * 20) + "%");
   };
   // *******************************************************************
   self.user_input = ko.observable('');
