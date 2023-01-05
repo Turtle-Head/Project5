@@ -5,21 +5,21 @@ var map;
 var loading = ko.observable(false);
 
 var pDmodel = [
-  {
-    'name': 'Bohemian Cafe & Catering Company',
-    'address': '524 Bernard Ave',
-    'id': 'ChIJNR-8ZKj0fVMRUTly1t01rtc'
-  },
+  // {
+  //   'name': 'Bohemian Cafe & Catering Company',
+  //   'address': '524 Bernard Ave',
+  //   'id': 'ChIJNR-8ZKj0fVMRUTly1t01rtc'
+  // },
   {
     'name': 'Mad Mango Cafe',
     'address': '551 Bernard Ave',
     'id': 'ChIJ0RjRaaj0fVMRJtulviLYwuo'
   },
-  {
-    'name': 'The Bean Scene Coffee House',
-    'address': '274 Bernard Ave',
-    'id': 'ChIJB2yMA6b0fVMRIk_JoBlIjxg'
-  },
+  // {
+  //   'name': 'The Bean Scene Coffee House',
+  //   'address': '274 Bernard Ave',
+  //   'id': 'ChIJB2yMA6b0fVMRIk_JoBlIjxg'
+  // },
   {
     'name': 'Mosaic Books',
     'address': '411 Bernard Ave',
