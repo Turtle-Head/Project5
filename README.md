@@ -27,7 +27,7 @@ January 11, 2016
 > Several code snippets were used and experimented on to get the OAuth code to work for getting a Yelp import
 > 001: 'https://discussions.udacity.com/t/im-having-trouble-getting-started-using-apis/13597/2'
 
-###### This paired well with snippets from source #001 to create a funtionaly working nonce generator for the OAuth sequence
+###### This paired well with snippets from source #001 to create a functionally working nonce generator for the OAuth sequence
 
 > 002: 'https://blog.nraboy.com/2015/03/create-a-random-nonce-string-using-javascript/'
 
@@ -47,9 +47,9 @@ January 11, 2016
 
 #### Bug Reporting: 
 
-##### Email me at fehr.james@gmail.com and thanks for taking the time to let me know what doesn't work so I can make it better.
+
 
 ----------------------------------------
 ##### Current Issues:
-
+> Some resources fail to load. This will likely be due to an expired Yelp cert and another resource.
 > End of Readme
